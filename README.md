@@ -6,7 +6,7 @@ Panda Canvas tries to make Canvas 2D less scary. (Still a work in progress.)
 ```bash
 git clone --depth 1 https://github.com/esby-space/panda-canvas.git
 cd panda-canvas
-tsc
+npx tsc
 ```
 Then open `index.html` in a browser, and edit `scripts/main.ts`
 
