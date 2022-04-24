@@ -21,7 +21,7 @@ const context = canvas.getContext('2d');
 context.beginPath();
 context.arc(200, 200, 50, 0, Math.PI * 2);
 context.closePath();
-context.fillStyle = "red";
+context.fillStyle = 'red';
 context.fill();
 ```
 And we got a red circle! I think we deserve a nap too after writing so much code. Using Panda, this becomes:
@@ -29,31 +29,29 @@ And we got a red circle! I think we deserve a nap too after writing so much code
 ```javascript
 import panda from './panda/panda.js';
 
-panda.draw.init();
+panda.init();
 panda.draw.circle(200, 200, 50, { color: 'red' });
 ```
 
 ## Examples
-1. Ball and gravity
-```javascript
-import panda from './panda/panda.js';
 
-const ball = {
-    x: 200,
-    y: 200,
-    velocity: new panda.Vector(0, 0),
-};
+Examples can found in the `scripts/examples` folder
 
-function update() {
-    ball.velocity.y += 1;
-    ball.x += ball.velocity.x;
-    ball.y += ball.velocity.y;
-}
+1. Bouncing ball with gravity and keyboard input
+2. more to come!
 
-function draw() {
-    panda.draw.circle(ball.x, ball.y, 50, { color: 'red' });
-}
+## To do
 
-panda.draw.init();
-panda.run(update, draw);
-```
+- [ ] fix `panda.draw.text()`
+- [ ] fix `panda.draw.image()`
+- [ ] add more shapes to `panda.draw`
+- [ ] add moveable camera
+- [ ] add system methods
+  - `stop()`
+  - `pause()`
+  - `play()`
+
+## Future
+
+- audio and music support
+- tilemap and background texture
