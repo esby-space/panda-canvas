@@ -3,7 +3,8 @@ const mouse = {
     y: 0,
     isPressed: false,
 
-    click: (callback: (event: MouseEvent) => void) => {
+    /** Fires a callback when the mouse is clicked. */
+    click(callback: (event: MouseEvent) => void) {
         document.addEventListener('click', callback);
     },
 };

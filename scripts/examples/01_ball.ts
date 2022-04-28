@@ -1,11 +1,14 @@
 import panda from '../panda/panda.js';
+import Vector from '../lib/vector.js';
+panda.init();
 
-// a bouncing ball with keyboard input
+// a red bouncing ball
+// rendering and keyboard input
 
 const ball = {
     x: 200,
     y: 200,
-    velocity: new panda.Vector(10, 0),
+    velocity: new Vector(10, 0),
 };
 
 function update() {
@@ -40,8 +43,8 @@ panda.keyboard.keyDown(' ', () => {
 });
 
 function draw() {
+    panda.draw.clear();
     panda.draw.circle(ball.x, ball.y, 50, { color: 'red' });
 }
 
-panda.init();
 panda.run(update, draw);

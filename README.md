@@ -1,6 +1,6 @@
-# Panda Canvas
+# Panda
 
-Panda Canvas tries to make Canvas 2D less scary. (Still a work in progress.)
+Panda tries to make Canvas 2D less scary. (Still a work in progress.)
 
 ## Start
 ```bash
@@ -35,23 +35,25 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 
 ## Examples
 
-Examples can found in the `scripts/examples` folder
+1. Bouncing ball with gravity
+2. Controllable player and basic animation
+3. Gravity and orbits
 
-1. Bouncing ball with gravity and keyboard input
-2. more to come!
+(all the pixel was by me, which is why it is so bad)
 
 ## To do
 
 - [ ] fix `panda.draw.text()`
-- [ ] fix `panda.draw.image()`
 - [ ] add more shapes to `panda.draw`
+- [ ] add more rendering options to `panda.draw`
 - [ ] add moveable camera
 - [ ] add system methods
-  - `stop()`
   - `pause()`
   - `play()`
+  - `toggle()`
 
 ## Future
 
 - audio and music support
 - tilemap and background texture
+- add transformations for images and drawings
