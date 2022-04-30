@@ -1,10 +1,12 @@
-import draw from './draw.js';
+import draw, { Sprite as _Sprite } from './draw.js';
 import keyboard from './keyboard.js';
 import mouse from './mouse.js';
+import load from './load.js';
 
 let rafID: number | null = null;
 
 const panda = {
+    load,
     draw,
     keyboard,
     mouse,
@@ -26,8 +28,10 @@ const panda = {
         panda.context = context;
     },
 
-    /** The main game loop! `update(dt)` and `draw()` run every frame. `load()` runs before the loop.  */
+    /** Boolean value indicating whether the animation is paused or not. */
     paused: true,
+
+    /** The main game loop! `update(dt)` and `draw()` run every frame. `load()` runs before the loop.  */
     async run(
         update: (dt: number) => void,
         draw: () => void,
@@ -56,11 +60,16 @@ const panda = {
         loop(0);
     },
 
+    /** Stops the animation. (If you only want to pause, try `panda.puased = false`) */
     stop() {
-        if (!rafID) return;
+        if (!rafID)
+            throw new Error(
+                `can't stop an animation that hasn't begun yet x_x`
+            );
         window.cancelAnimationFrame(rafID);
         this.paused = true;
     },
 };
 
 export default panda;
+export type Sprite = _Sprite;

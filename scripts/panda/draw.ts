@@ -51,7 +51,10 @@ const draw = {
         const container = options?.container ?? document.body;
         this.canvas = document.createElement('canvas');
         container.append(this.canvas);
-        this.context = this.canvas.getContext('2d')!;
+
+        const context = this.canvas.getContext('2d')!;
+        if (!context) throw new Error('error loading in the context x_x');
+        this.context = context;
 
         let width = container.clientWidth;
         let height = container.clientHeight;
@@ -84,7 +87,7 @@ const draw = {
         this.context!.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     },
 
-    /** The ackground color panda will use. */
+    /** The background color panda will use. */
     set backgroundColor(color: RGB | color) {
         if (typeof color == 'string') color = colors[color];
         this.canvas!.style.background = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
@@ -206,24 +209,6 @@ const draw = {
 
     // SPRITES //
     Sprite,
-    /** Loads a sprite so it can be used later. */
-    async loadSprite(
-        src: string,
-        options?: { hFrame?: number; vFrame?: number; frame?: number }
-    ) {
-        const image = new Image();
-        image.src = src;
-        await image.decode().catch(() => {
-            throw new Error(`couldn't load image ${src} x_x`);
-        });
-        return new Sprite(
-            image,
-            options?.hFrame,
-            options?.vFrame,
-            options?.frame
-        );
-    },
-
     /** Draws a sprite to the screen. */
     sprite(
         sprite: Sprite,

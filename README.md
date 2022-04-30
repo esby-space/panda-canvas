@@ -35,11 +35,26 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 
 ## Examples
 
+![red ball](images/ball.jpg)
 1. Bouncing ball with gravity
-2. Controllable player and basic animation
-3. Gravity and orbits
+   - basic drawings
+   - basic physics
+   - game loop
+   - basic keyboard input
 
-(all the pixel was by me, which is why it is so bad)
+![pixel panda](images/panda.jpg)
+2. Controllable player and basic animation
+   - sprite loading and rendering
+   - sprite animation
+   - more keyboard input
+   - my really bad pixel art
+
+![orbiting planets](images/orbit.jpg)
+3. Gravity and orbits
+   - more physics
+   - more of my really bad pixel art
+4. Basic platformer
+    - WIP
 
 ## To do
 
@@ -47,10 +62,6 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 - [ ] add more shapes to `panda.draw`
 - [ ] add more rendering options to `panda.draw`
 - [ ] add moveable camera
-- [ ] add system methods
-  - `pause()`
-  - `play()`
-  - `toggle()`
 
 ## Future
 

@@ -1,6 +1,5 @@
-import panda from '../panda/panda.js';
+import panda, { Sprite } from '../panda/panda.js';
 import Vector from '../lib/vector.js';
-import type { Sprite } from '../panda/draw.js';
 panda.init({ pixelated: true });
 
 // a simulation of planets orbiting a star
@@ -24,15 +23,13 @@ const objects = [Sun, Earth, Mars];
 
 // load in the sprites
 async function load() {
-    Earth.sprite = await panda.draw.loadSprite(
+    Earth.sprite = await panda.load.sprite(
         './scripts/examples/sprites/earth.png'
     );
-    Mars.sprite = await panda.draw.loadSprite(
+    Mars.sprite = await panda.load.sprite(
         './scripts/examples/sprites/mars.png'
     );
-    Sun.sprite = await panda.draw.loadSprite(
-        './scripts/examples/sprites/sun.png'
-    );
+    Sun.sprite = await panda.load.sprite('./scripts/examples/sprites/sun.png');
 }
 
 // main update function
