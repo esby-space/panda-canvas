@@ -64,12 +64,12 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 - [ ] fix `panda.draw.text()`
 - [ ] add more shapes to `panda.draw`
 - [ ] add more rendering options to `panda.draw`
-- [ ] add moveable camera
 - [ ] improved `panda.init()`
-  - opportunity for retro pixel rendering (where all pixels are aligned to grid)
+  - retro pixel rendering! (where all pixels are aligned to grid)
+- [ ] tilemap and background texture
 
 ## Future
 
 - audio and music support
-- tilemap and background texture
 - add transformations for images and drawings
+- add interface to interact with html elements

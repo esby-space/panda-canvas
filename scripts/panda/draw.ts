@@ -1,3 +1,5 @@
+import camera from './camera.js';
+
 export class Sprite {
     constructor(
         public image: HTMLImageElement,
@@ -37,6 +39,12 @@ export class Sprite {
         this.animation = null;
     }
 }
+
+type RGB = [r: number, g: number, b: number];
+type color = keyof typeof colors;
+type DrawOptions =
+    | { color?: RGB | color; mode?: 'fill' | 'line'; center?: boolean }
+    | undefined;
 
 const draw = {
     canvas: undefined as HTMLCanvasElement | undefined,
@@ -95,11 +103,11 @@ const draw = {
 
     // SHAPES //
     /** Renders any path for the context. (You probably want `panda.draw.line()`) */
-    render(options?: { color?: RGB | color; mode?: 'fill' | 'line' }) {
+    render({ color, mode = 'fill' }: DrawOptions = {}) {
         this.context!.save();
-        if (options?.color) draw.drawColor = options?.color;
-        if (options?.mode == 'line') this.context!.stroke();
-        else this.context!.fill();
+        if (color) draw.drawColor = color;
+        if (mode == 'line') this.context!.stroke();
+        else if (mode == 'fill') this.context!.fill();
         this.context!.restore();
     },
 
@@ -109,13 +117,13 @@ const draw = {
         y1: number,
         x2: number,
         y2: number,
-        options?: { color?: RGB | color }
+        { color }: DrawOptions = {}
     ) {
         this.context!.beginPath();
-        this.context!.moveTo(x1, y1);
-        this.context!.lineTo(x2, y2);
+        this.context!.moveTo(x1 + camera.offsetX, y1 + camera.offsetY);
+        this.context!.lineTo(x2 + camera.offsetX, y2 + camera.offsetY);
         this.context!.closePath();
-        draw.render(options);
+        draw.render({ color });
     },
 
     /** Draws a perfect circle, just define the center and the radius! */
@@ -123,12 +131,18 @@ const draw = {
         x: number,
         y: number,
         radius: number,
-        options?: { color?: RGB | color; mode?: 'fill' | 'line' }
+        { color, mode }: DrawOptions = {}
     ) {
         this.context!.beginPath();
-        this.context!.arc(x, y, radius, 0, Math.PI * 2);
+        this.context!.arc(
+            x + camera.offsetX,
+            y + camera.offsetY,
+            radius,
+            0,
+            Math.PI * 2
+        );
         this.context!.closePath();
-        draw.render(options);
+        draw.render({ color, mode });
     },
 
     /** Draws a rectangle, just give a point, width, and the height! */
@@ -137,21 +151,17 @@ const draw = {
         y: number,
         width: number,
         height: number,
-        options?: {
-            color?: RGB | color;
-            mode?: 'fill' | 'line';
-            center?: boolean;
-        }
+        { color, mode, center = true }: DrawOptions = {}
     ) {
         this.context!.beginPath();
         this.context!.rect(
-            (options?.center ? -width / 2 : 0) + x,
-            (options?.center ? -height / 2 : 0) + y,
+            (center ? -width / 2 : 0) + x + camera.offsetX,
+            (center ? -height / 2 : 0) + y + camera.offsetY,
             width,
             height
         );
         this.context!.closePath();
-        draw.render(options);
+        draw.render({ color, mode });
     },
 
     /** Draws a square, just give a point and one of the side lengths! */
@@ -159,46 +169,43 @@ const draw = {
         x: number,
         y: number,
         length: number,
-        options?: {
-            color?: RGB | color;
-            mode?: 'fill' | 'line';
-            center?: boolean;
-        }
+        { color, mode, center = true }: DrawOptions = {}
     ) {
         this.context!.beginPath();
         this.context!.rect(
-            (options?.center ? -length / 2 : 0) + x,
-            (options?.center ? -length / 2 : 0) + y,
+            (center ? -length / 2 : 0) + x + camera.offsetX,
+            (center ? -length / 2 : 0) + y + camera.offsetY,
             length,
             length
         );
         this.context!.closePath();
-        draw.render(options);
+        draw.render({ color, mode });
     },
 
     /** Draws a polygon given the coordinates of all the points in the shape. */
     polygon(
         points: [x: number, y: number][],
-        options?: { color?: RGB | color; mode?: 'fill' | 'line' }
+        { color, mode }: DrawOptions = {}
     ) {
         this.context!.beginPath();
-        this.context!.moveTo(points[0][0], points[0][1]);
+        this.context!.moveTo(
+            points[0][0] + camera.offsetX,
+            points[0][1] + camera.offsetY
+        );
         for (let i = 1; i < points.length; i++) {
-            this.context!.lineTo(points[i][0], points[i][1]);
+            this.context!.lineTo(
+                points[i][0] + camera.offsetX,
+                points[i][1] + camera.offsetY
+            );
         }
         this.context!.closePath();
-        draw.render(options);
+        draw.render({ color, mode });
     },
 
     /** Render basic text to the screen. */
-    text(
-        text: string,
-        x: number,
-        y: number,
-        options?: { color?: RGB | color }
-    ) {
-        this.context!.fillText(text, x, y);
+    text(text: string, x: number, y: number, { color }: DrawOptions = {}) {
         // TODO: implement styles
+        this.context!.fillText(text, x + camera.offsetX, y + camera.offsetY);
     },
 
     /** Clear the screen of all drawings. */
@@ -214,10 +221,14 @@ const draw = {
         sprite: Sprite,
         x: number,
         y: number,
-        options?: { width?: number; height?: number; center?: boolean }
+        {
+            width,
+            height,
+            center = true,
+        }: { width?: number; height?: number; center?: boolean } = {}
     ) {
-        const width = options?.width ?? sprite.image.width;
-        const height = options?.height ?? sprite.image.height;
+        width = width ?? sprite.image.width;
+        height = height ?? sprite.image.height;
 
         const sw = sprite.image.width / sprite.hFrame;
         const sh = sprite.image.height / sprite.vFrame;
@@ -230,8 +241,8 @@ const draw = {
             sy,
             sw,
             sh,
-            (options?.center ? -width / 2 : 0) + x,
-            (options?.center ? -height / 2 : 0) + y,
+            (center ? -width / 2 : 0) + x + camera.offsetX,
+            (center ? -height / 2 : 0) + y + camera.offsetY,
             width,
             height
         );
@@ -266,7 +277,5 @@ export const colors = {
     pink: [255, 119, 168] as RGB,
     peach: [255, 204, 170] as RGB,
 };
-type RGB = [r: number, g: number, b: number];
-type color = keyof typeof colors;
 
 export default draw;

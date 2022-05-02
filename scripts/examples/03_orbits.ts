@@ -36,6 +36,9 @@ async function load() {
 function update() {
     updateVelocity();
     updatePosition();
+
+    panda.camera.x = currentBody.x;
+    panda.camera.y = currentBody.y;
 }
 
 // apply the force of gravity from all object on all other objects
@@ -68,6 +71,15 @@ function calculateGravity(mass1: number, mass2: number, radius: number) {
     return (1 * (mass1 * mass2)) / radius ** 2;
 }
 
+// change camera when space is pushed
+let currentTrack = 0;
+let currentBody = Sun;
+panda.keyboard.keyDown(' ', () => {
+    currentTrack++;
+    if (currentTrack >= objects.length) currentTrack = 0;
+    currentBody = objects[currentTrack];
+});
+
 // draw circles with radius relative to the mass
 function draw() {
     panda.draw.clear();
@@ -81,6 +93,3 @@ function draw() {
 }
 
 panda.run(update, draw, load);
-panda.keyboard.keyDown(' ', () => {
-    panda.paused = !panda.paused;
-});

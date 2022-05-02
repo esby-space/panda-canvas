@@ -1,15 +1,17 @@
-import draw, { Sprite as _Sprite } from './draw.js';
+import load from './load.js';
 import keyboard from './keyboard.js';
 import mouse from './mouse.js';
-import load from './load.js';
+import camera from './camera.js';
+import draw, { Sprite as _Sprite } from './draw.js';
 
 let rafID: number | null = null;
 
 const panda = {
     load,
-    draw,
     keyboard,
     mouse,
+    camera,
+    draw,
 
     width: 0,
     height: 0,
@@ -23,9 +25,11 @@ const panda = {
         retina?: boolean;
     }) {
         const { canvas, context } = draw.init(options);
+        panda.context = context;
+
         panda.width = canvas.width;
         panda.height = canvas.height;
-        panda.context = context;
+        camera.init(canvas.width, canvas.height);
     },
 
     /** Boolean value indicating whether the animation is paused or not. */

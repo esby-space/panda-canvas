@@ -47,6 +47,9 @@ function update(dt: number) {
     else if (bai.velocity.x < 0)
         bai.sprite!.animate([10, 11, 12, 13, 14, 15, 16, 17], 10);
     else bai.sprite!.stopAnimation();
+
+    // update camera
+    panda.camera.x = bai.x;
 }
 
 let numJumps = 0;
@@ -59,6 +62,7 @@ panda.keyboard.keyDown(' ', jump);
 
 function draw() {
     panda.draw.clear();
+    panda.draw.square(0, 0, 50, { color: 'yellow' });
     panda.draw.sprite(bai.sprite!, bai.x, bai.y, {
         width: bai.height, // sprite boxes are square
         height: bai.height,
