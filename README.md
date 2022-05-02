@@ -55,6 +55,9 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
    - more of my really bad pixel art
 4. Basic platformer
     - WIP
+5. Basic game
+   - WIP
+   - pixel art "heavily inspired" by [aarthificial](https://www.youtube.com/watch?v=MZrp-FauId4)
 
 ## To do
 
@@ -62,6 +65,8 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 - [ ] add more shapes to `panda.draw`
 - [ ] add more rendering options to `panda.draw`
 - [ ] add moveable camera
+- [ ] improved `panda.init()`
+  - opportunity for retro pixel rendering (where all pixels are aligned to grid)
 
 ## Future
 
