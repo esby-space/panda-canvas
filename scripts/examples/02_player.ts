@@ -14,10 +14,10 @@ const player = {
 
 // load the sprite, hFrame and vFrame describe how many tiles are in the image
 async function load() {
-    player.sprite = await panda.load.sprite(
-        './scripts/examples/sprites/panda.png',
-        { hFrame: 3, vFrame: 4 }
-    );
+    player.sprite = await panda.load.sprite('./scripts/examples/sprites/panda.png', {
+        hFrame: 3,
+        vFrame: 4,
+    });
 }
 
 function update(dt: number) {

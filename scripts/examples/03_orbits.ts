@@ -23,12 +23,8 @@ const objects = [Sun, Earth, Mars];
 
 // load in the sprites
 async function load() {
-    Earth.sprite = await panda.load.sprite(
-        './scripts/examples/sprites/earth.png'
-    );
-    Mars.sprite = await panda.load.sprite(
-        './scripts/examples/sprites/mars.png'
-    );
+    Earth.sprite = await panda.load.sprite('./scripts/examples/sprites/earth.png');
+    Mars.sprite = await panda.load.sprite('./scripts/examples/sprites/mars.png');
     Sun.sprite = await panda.load.sprite('./scripts/examples/sprites/sun.png');
 }
 
@@ -46,9 +42,7 @@ function updateVelocity() {
     for (let [i, obj1] of objects.entries()) {
         for (let [j, obj2] of objects.entries()) {
             if (obj1 == obj2 || i < j) continue;
-            const radius = Math.sqrt(
-                (obj2.x - obj1.x) ** 2 + (obj2.y - obj1.y) ** 2
-            );
+            const radius = Math.sqrt((obj2.x - obj1.x) ** 2 + (obj2.y - obj1.y) ** 2);
             const gravity = new Vector(obj2.x - obj1.x, obj2.y - obj1.y);
             gravity.magnitude = calculateGravity(obj1.mass, obj2.mass, radius);
 

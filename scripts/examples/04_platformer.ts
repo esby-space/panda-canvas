@@ -2,6 +2,7 @@ import panda, { Sprite } from '../panda/panda.js';
 import Vector from '../lib/vector.js';
 panda.init({ pixelated: true });
 
+let bricks: Sprite;
 // panda player!
 const player = {
     x: panda.width / 2,
@@ -12,10 +13,11 @@ const player = {
 
 async function load() {
     // load in sprites
-    player.sprite = await panda.load.sprite(
-        './scripts/examples/sprites/panda.png',
-        { hFrame: 3, vFrame: 4 }
-    );
+    player.sprite = await panda.load.sprite('./scripts/examples/sprites/panda.png', {
+        hFrame: 3,
+        vFrame: 4,
+    });
+    bricks = await panda.load.sprite('./scripts/examples/sprites/bricks.png');
 }
 
 function update(dt: number) {
@@ -59,6 +61,10 @@ function jump() {
 
 function draw() {
     panda.draw.clear();
+    panda.draw.rectangle(0, 0, panda.width, panda.height, {
+        pattern: { sprite: bricks, width: 100, height: 100 },
+        center: false,
+    });
     panda.draw.sprite(player.sprite!, player.x, player.y, {
         width: 100,
         height: 100,
@@ -66,5 +72,4 @@ function draw() {
     });
 }
 
-panda.draw.backgroundColor = 'darkPurple';
 panda.run(update, draw, load);

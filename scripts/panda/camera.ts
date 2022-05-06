@@ -8,7 +8,7 @@ const camera = {
     height: 0,
 
     /** Needed to use `camera.offsetX / Y`. You probably want `panda.init()` instead. */
-    init(width: number, height: number, x?: number, y?: number) {
+    init(width: number, height: number, x?: number, y?: number): void {
         this.width = width;
         this.height = height;
         this.x = x ?? width / 2;

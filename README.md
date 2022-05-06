@@ -53,6 +53,7 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 3. Gravity and orbits
    - more physics
    - more of my really bad pixel art
+
 4. Basic platformer
     - WIP
 5. Basic game
@@ -63,13 +64,12 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 
 - [ ] fix `panda.draw.text()`
 - [ ] add more shapes to `panda.draw`
-- [ ] add more rendering options to `panda.draw`
 - [ ] improved `panda.init()`
-  - retro pixel rendering! (where all pixels are aligned to grid)
-- [ ] tilemap and background texture
+- [ ] better animation system (someone please help i have no idea what i'm doing)
 
 ## Future
 
 - audio and music support
 - add transformations for images and drawings
 - add interface to interact with html elements
+- scene loader and handler

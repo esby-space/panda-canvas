@@ -1,61 +1,32 @@
 import camera from './camera.js';
-
-export class Sprite {
-    constructor(
-        public image: HTMLImageElement,
-        public hFrame = 1,
-        public vFrame = 1,
-        public frame = 0
-    ) {}
-
-    private animation: string | null = null;
-    animate(frames: number[], fps: number) {
-        if (this.animation != frames.toString()) this.stopAnimation();
-        if (this.animation) return;
-        this.animation = frames.toString();
-
-        const delay = 1000 / fps;
-        let then = Date.now();
-
-        let currentFrame = 0;
-        const animate = () => {
-            const now = Date.now();
-            const elapsed = now - then;
-
-            if (elapsed > delay) {
-                then = now - (elapsed % delay);
-                this.frame = frames[currentFrame];
-                currentFrame++;
-                if (currentFrame > frames.length - 1) currentFrame = 0;
-            }
-            this.rafID = window.requestAnimationFrame(animate);
-        };
-        animate();
-    }
-
-    private rafID: number | null = null;
-    stopAnimation() {
-        if (this.rafID) window.cancelAnimationFrame(this.rafID);
-        this.animation = null;
-    }
-}
+import Sprite from './sprite.js';
 
 type RGB = [r: number, g: number, b: number];
 type color = keyof typeof colors;
 type DrawOptions =
-    | { color?: RGB | color; mode?: 'fill' | 'line'; center?: boolean }
+    | {
+          color?: RGB | color;
+          mode?: 'fill' | 'line';
+          center?: boolean;
+          position?: 'scene' | 'view';
+          pattern?: { sprite: Sprite; width?: number; height?: number };
+      }
     | undefined;
 
 const draw = {
-    canvas: undefined as HTMLCanvasElement | undefined,
-    context: undefined as CanvasRenderingContext2D | undefined,
+    canvas: null as HTMLCanvasElement | null,
+    context: null as CanvasRenderingContext2D | null,
 
     /** Makes and sizes the canvas and context. (You probably want `panda.init()`) */
     init(options?: {
         container?: HTMLElement;
         pixelated?: boolean;
-        retina?: boolean;
-    }) {
+        width?: number;
+        height?: number;
+    }): {
+        canvas: HTMLCanvasElement;
+        context: CanvasRenderingContext2D;
+    } {
         const container = options?.container ?? document.body;
         this.canvas = document.createElement('canvas');
         container.append(this.canvas);
@@ -64,18 +35,9 @@ const draw = {
         if (!context) throw new Error('error loading in the context x_x');
         this.context = context;
 
-        let width = container.clientWidth;
-        let height = container.clientHeight;
-        this.canvas.style.width = width + 'px';
-        this.canvas.style.height = height + 'px';
-
-        if (options?.retina) {
-            width *= window.devicePixelRatio;
-            height *= window.devicePixelRatio;
-        }
-
-        this.canvas.width = width;
-        this.canvas.height = height;
+        let width = options?.width ?? container.clientWidth;
+        let height = options?.height ?? container.clientHeight;
+        draw.resize(width, height, container);
 
         draw.backgroundColor = 'black';
         draw.drawColor = 'white';
@@ -86,6 +48,13 @@ const draw = {
         }
 
         return { canvas: this.canvas, context: this.context };
+    },
+
+    resize(width: number, height: number, container?: HTMLElement): void {
+        this.canvas!.style.width = (container?.clientWidth ?? width) + 'px';
+        this.canvas!.style.height = (container?.clientHeight ?? height) + 'px';
+        this.canvas!.width = width;
+        this.canvas!.height = height;
     },
 
     /** The default drawing color panda will use. */
@@ -103,12 +72,32 @@ const draw = {
 
     // SHAPES //
     /** Renders any path for the context. (You probably want `panda.draw.line()`) */
-    render({ color, mode = 'fill' }: DrawOptions = {}) {
+    render({ color, mode = 'fill', pattern }: DrawOptions = {}): void {
         this.context!.save();
+
         if (color) draw.drawColor = color;
+        if (pattern) {
+            const style = this.context!.createPattern(pattern.sprite.image, 'repeat');
+            if (!style) throw new Error(`error loading in the pattern x_x`);
+
+            const scaleX = pattern.width ? pattern.width / pattern.sprite.image.width : 1;
+            const scaleY = pattern.height ? pattern.height / pattern.sprite.image.height : 1;
+            this.context!.scale(scaleX, scaleY);
+            this.context!.fillStyle = style;
+        }
+
         if (mode == 'line') this.context!.stroke();
         else if (mode == 'fill') this.context!.fill();
+
         this.context!.restore();
+        this.context!.resetTransform();
+    },
+
+    translate(x: number, y: number, { position = 'scene' }: DrawOptions = {}): void {
+        this.context!.translate(
+            x + (position == 'scene' ? camera.offsetX : 0),
+            y + (position == 'scene' ? camera.offsetY : 0)
+        );
     },
 
     /** Draws a straight line betwen two points. */
@@ -117,11 +106,12 @@ const draw = {
         y1: number,
         x2: number,
         y2: number,
-        { color }: DrawOptions = {}
-    ) {
+        { color, position }: DrawOptions = {}
+    ): void {
+        draw.translate(x1, y1, { position });
         this.context!.beginPath();
-        this.context!.moveTo(x1 + camera.offsetX, y1 + camera.offsetY);
-        this.context!.lineTo(x2 + camera.offsetX, y2 + camera.offsetY);
+        this.context!.moveTo(0, 0);
+        this.context!.lineTo(x2 - x1, y2 - y1);
         this.context!.closePath();
         draw.render({ color });
     },
@@ -131,18 +121,13 @@ const draw = {
         x: number,
         y: number,
         radius: number,
-        { color, mode }: DrawOptions = {}
-    ) {
+        { color, mode, position = 'scene', pattern }: DrawOptions = {}
+    ): void {
+        draw.translate(x, y, { position });
         this.context!.beginPath();
-        this.context!.arc(
-            x + camera.offsetX,
-            y + camera.offsetY,
-            radius,
-            0,
-            Math.PI * 2
-        );
+        this.context!.arc(0, 0, radius, 0, Math.PI * 2);
         this.context!.closePath();
-        draw.render({ color, mode });
+        draw.render({ color, mode, pattern });
     },
 
     /** Draws a rectangle, just give a point, width, and the height! */
@@ -151,17 +136,13 @@ const draw = {
         y: number,
         width: number,
         height: number,
-        { color, mode, center = true }: DrawOptions = {}
-    ) {
+        { color, mode, center = true, position, pattern }: DrawOptions = {}
+    ): void {
+        draw.translate(x, y, { position });
         this.context!.beginPath();
-        this.context!.rect(
-            (center ? -width / 2 : 0) + x + camera.offsetX,
-            (center ? -height / 2 : 0) + y + camera.offsetY,
-            width,
-            height
-        );
+        this.context!.rect(center ? -width / 2 : 0, center ? -height / 2 : 0, width, height);
         this.context!.closePath();
-        draw.render({ color, mode });
+        draw.render({ color, mode, pattern });
     },
 
     /** Draws a square, just give a point and one of the side lengths! */
@@ -169,49 +150,51 @@ const draw = {
         x: number,
         y: number,
         length: number,
-        { color, mode, center = true }: DrawOptions = {}
-    ) {
+        { color, mode, center = true, position, pattern }: DrawOptions = {}
+    ): void {
+        draw.translate(x, y, { position });
         this.context!.beginPath();
-        this.context!.rect(
-            (center ? -length / 2 : 0) + x + camera.offsetX,
-            (center ? -length / 2 : 0) + y + camera.offsetY,
-            length,
-            length
-        );
+        this.context!.rect(center ? -length / 2 : 0, center ? -length / 2 : 0, length, length);
         this.context!.closePath();
-        draw.render({ color, mode });
+        draw.render({ color, mode, pattern });
     },
 
-    /** Draws a polygon given the coordinates of all the points in the shape. */
+    /** Draws a polygon given the coordinates of all the points in the shape. TODO: Might not work anymore */
     polygon(
         points: [x: number, y: number][],
-        { color, mode }: DrawOptions = {}
-    ) {
+        { color, mode, position = 'scene', pattern }: DrawOptions = {}
+    ): void {
+        draw.translate(points[0][0], points[0][1], { position });
         this.context!.beginPath();
-        this.context!.moveTo(
-            points[0][0] + camera.offsetX,
-            points[0][1] + camera.offsetY
-        );
+        this.context!.moveTo(points[0][0], points[0][1]);
         for (let i = 1; i < points.length; i++) {
-            this.context!.lineTo(
-                points[i][0] + camera.offsetX,
-                points[i][1] + camera.offsetY
-            );
+            this.context!.lineTo(points[i][0], points[i][1]);
         }
         this.context!.closePath();
-        draw.render({ color, mode });
+        draw.render({ color, mode, pattern });
     },
 
     /** Render basic text to the screen. */
-    text(text: string, x: number, y: number, { color }: DrawOptions = {}) {
+    text(
+        text: string,
+        x: number,
+        y: number,
+        { color, position = 'scene' }: DrawOptions = {}
+    ): void {
         // TODO: implement styles
-        this.context!.fillText(text, x + camera.offsetX, y + camera.offsetY);
+        draw.translate(x, y, { position });
+        this.context!.fillText(text, 0, 0);
+        this.context!.resetTransform();
     },
 
     /** Clear the screen of all drawings. */
-    clear() {
-        this.context!.resetTransform();
-        this.context!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+    clear(opacity?: number): void {
+        if (opacity) {
+            const prevStyle = this.context!.fillStyle;
+            this.context!.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+            this.context!.fillRect(0, 0, this.canvas!.width, this.canvas!.height);
+            this.context!.fillStyle = prevStyle;
+        } else this.context!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
     },
 
     // SPRITES //
@@ -225,8 +208,14 @@ const draw = {
             width,
             height,
             center = true,
-        }: { width?: number; height?: number; center?: boolean } = {}
-    ) {
+            position = 'scene',
+        }: {
+            width?: number;
+            height?: number;
+            center?: boolean;
+            position?: 'scene' | 'view';
+        } = {}
+    ): void {
         width = width ?? sprite.image.width;
         height = height ?? sprite.image.height;
 
@@ -235,25 +224,27 @@ const draw = {
         const sx = (sprite.frame % sprite.hFrame) * sw;
         const sy = Math.floor(sprite.frame / sprite.hFrame) * sh;
 
+        draw.translate(x, y, { position });
         this.context!.drawImage(
             sprite.image,
             sx,
             sy,
             sw,
             sh,
-            (center ? -width / 2 : 0) + x + camera.offsetX,
-            (center ? -height / 2 : 0) + y + camera.offsetY,
+            center ? -width / 2 : 0,
+            center ? -height / 2 : 0,
             width,
             height
         );
+        this.context!.resetTransform();
     },
 
     /** Animates a sprite with the specified frames and frame rate. */
-    animate(sprite: Sprite, frames: number[], fps: number) {
+    animate(sprite: Sprite, frames: number[], fps: number): void {
         sprite.animate(frames, fps);
     },
 
-    stopAnimation(sprite: Sprite) {
+    stopAnimation(sprite: Sprite): void {
         sprite.stopAnimation();
     },
 };
