@@ -40,7 +40,7 @@ const draw = {
         draw.resize(width, height, container);
 
         draw.backgroundColor = 'black';
-        draw.drawColor = 'white';
+        draw.color = 'white';
 
         if (options?.pixelated) {
             this.canvas.style.imageRendering = 'pixelated';
@@ -58,7 +58,7 @@ const draw = {
     },
 
     /** The default drawing color panda will use. */
-    set drawColor(color: RGB | color) {
+    set color(color: RGB | color) {
         if (typeof color != 'object') color = colors[color];
         this.context!.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
         this.context!.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
@@ -75,7 +75,7 @@ const draw = {
     render({ color, mode = 'fill', pattern }: DrawOptions = {}): void {
         this.context!.save();
 
-        if (color) draw.drawColor = color;
+        if (color) draw.color = color;
         if (pattern) {
             const style = this.context!.createPattern(pattern.sprite.image, 'repeat');
             if (!style) throw new Error(`error loading in the pattern x_x`);
@@ -121,7 +121,7 @@ const draw = {
         x: number,
         y: number,
         radius: number,
-        { color, mode, position = 'scene', pattern }: DrawOptions = {}
+        { color, mode, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(x, y, { position });
         this.context!.beginPath();
@@ -162,7 +162,7 @@ const draw = {
     /** Draws a polygon given the coordinates of all the points in the shape. TODO: Might not work anymore */
     polygon(
         points: [x: number, y: number][],
-        { color, mode, position = 'scene', pattern }: DrawOptions = {}
+        { color, mode, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(points[0][0], points[0][1], { position });
         this.context!.beginPath();
@@ -179,12 +179,32 @@ const draw = {
         text: string,
         x: number,
         y: number,
-        { color, position = 'scene' }: DrawOptions = {}
+        { color, position, center = true, font }: DrawOptions & { font?: string } = {}
     ): void {
         // TODO: implement styles
+        this.context!.save();
         draw.translate(x, y, { position });
+        if (color) draw.color = color;
+        if (font) this.context!.font = font;
+
+        this.context!.textAlign = center ? 'center' : 'start';
+        this.context!.textBaseline = center ? 'middle' : 'alphabetic';
         this.context!.fillText(text, 0, 0);
-        this.context!.resetTransform();
+        this.context!.restore();
+    },
+
+    /** Define a custom shape with Canvas2D! Automatically begins and ends path, position, and color. */
+    custom(
+        x: number,
+        y: number,
+        callback: (context: CanvasRenderingContext2D) => void,
+        { color, mode, position, pattern }: DrawOptions = {}
+    ): void {
+        draw.translate(x, y, { position });
+        this.context!.beginPath();
+        callback(draw.context!);
+        this.context!.closePath();
+        draw.render({ color, mode, pattern });
     },
 
     /** Clear the screen of all drawings. */

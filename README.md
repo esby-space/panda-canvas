@@ -62,9 +62,6 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 
 ## To do
 
-- [ ] fix `panda.draw.text()`
-- [ ] add more shapes to `panda.draw`
-- [ ] improved `panda.init()`
 - [ ] better animation system (someone please help i have no idea what i'm doing)
 
 ## Future
@@ -73,3 +70,4 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 - add transformations for images and drawings
 - add interface to interact with html elements
 - scene loader and handler
+- support multiple instances of panda in one page
