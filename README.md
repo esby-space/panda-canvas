@@ -54,10 +54,15 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
    - more physics
    - more of my really bad pixel art
 
+![pixel panda and platforms](images/platform.jpg)
 4. Basic platformer
-    - WIP
+    - background
+    - collision detection
+
+![bai!](images/bai.jpg)
 5. Basic game
    - WIP
+   - sprite animation
    - pixel art "heavily inspired" by [aarthificial](https://www.youtube.com/watch?v=MZrp-FauId4)
 
 ## To do
