@@ -18,11 +18,11 @@ const trees = {
 };
 async function load() {
     // load in sprites
+    trees.sprite = await panda.load.sprite('./scripts/examples/sprites/tree.png');
     bai.sprite = await panda.load.sprite('./scripts/examples/sprites/bai.png', {
         hFrame: 8,
         vFrame: 2,
     });
-    trees.sprite = await panda.load.sprite('./scripts/examples/sprites/tree.png');
     for (let i = 0; i < 20; i++) {
         trees.xs = [...trees.xs, Math.random() * WORLD_WIDTH - WORLD_WIDTH / 2];
     }

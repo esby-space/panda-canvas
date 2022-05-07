@@ -9,7 +9,7 @@ class Planet {
     mass;
     velocity;
     sprite;
-    constructor(x, y, mass, velocity = new Vector(0, 0), sprite = undefined) {
+    constructor(x, y, mass, velocity = new Vector(0, 0), sprite = null) {
         this.x = x;
         this.y = y;
         this.mass = mass;

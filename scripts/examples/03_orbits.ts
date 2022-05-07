@@ -11,7 +11,7 @@ class Planet {
         public y: number,
         public mass: number,
         public velocity = new Vector(0, 0),
-        public sprite: Sprite | undefined = undefined
+        public sprite: Sprite | null = null
     ) {}
 }
 

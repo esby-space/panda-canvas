@@ -68,11 +68,12 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 ## To do
 
 - [ ] better animation system (someone please help i have no idea what i'm doing)
+- [ ] support multiple instances of panda in one page
+- [ ] audio and music support
+- [ ] add transformations for images and drawings
 
 ## Future
 
-- audio and music support
-- add transformations for images and drawings
 - add interface to interact with html elements
 - scene loader and handler
-- support multiple instances of panda in one page
+- built-in collision detection??

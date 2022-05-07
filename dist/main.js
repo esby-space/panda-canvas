@@ -8,6 +8,5 @@ function update(dt) {
 function draw() {
     panda.draw.clear();
     // called to draw the frame
-    // you can use panda.context to get the Canvas 2D context
 }
 panda.run(update, draw);

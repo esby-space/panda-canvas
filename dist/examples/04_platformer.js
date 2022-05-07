@@ -1,13 +1,14 @@
 import panda from '../panda/panda.js';
 import Vector from '../lib/vector.js';
 panda.init({ pixelated: true });
+// panda player and platforms!
+// collision detection and handling
 let bricks;
-// panda player!
 const player = {
     x: panda.width / 2,
     y: panda.height - 50,
     velocity: new Vector(0, 0),
-    sprite: undefined,
+    sprite: null,
     prev: { x: 0, y: 0 },
 };
 class Platform {
@@ -21,11 +22,11 @@ class Platform {
 let platforms = [];
 async function load() {
     // load in sprites
+    bricks = await panda.load.sprite('./scripts/examples/sprites/bricks.png');
     player.sprite = await panda.load.sprite('./scripts/examples/sprites/panda.png', {
         hFrame: 3,
         vFrame: 4,
     });
-    bricks = await panda.load.sprite('./scripts/examples/sprites/bricks.png');
     for (let i = 0; i < 10; i++) {
         platforms = [
             ...platforms,

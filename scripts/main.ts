@@ -11,7 +11,6 @@ function update(dt: number): void {
 function draw(): void {
     panda.draw.clear();
     // called to draw the frame
-    // you can use panda.context to get the Canvas 2D context
 }
 
 panda.run(update, draw);

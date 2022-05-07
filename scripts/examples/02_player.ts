@@ -9,7 +9,7 @@ const player = {
     x: panda.width / 2,
     y: panda.height / 2,
     velocity: new Vector(0, 0),
-    sprite: undefined as Sprite | undefined,
+    sprite: null as Sprite | null,
 };
 
 // load the sprite, hFrame and vFrame describe how many tiles are in the image
