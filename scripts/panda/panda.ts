@@ -1,19 +1,21 @@
-import load from './load.js';
 import keyboard from './keyboard.js';
 import mouse from './mouse.js';
 import camera from './camera.js';
-import draw from './draw.js';
-import _Sprite from './sprite.js';
+import draw, { RGB, color } from './draw.js';
+import * as Shapes from './shapes.js';
+import math, { Vector } from './math.js';
 
 let rafID: number | null = null;
 
-const panda = {
-    load,
+const Panda = {
+    // UTILIIES //
     keyboard,
     mouse,
     camera,
     draw,
+    math,
 
+    // MAIN //
     width: 0,
     height: 0,
     frame: 0,
@@ -26,11 +28,13 @@ const panda = {
         width?: number;
         height?: number;
     }): void {
+        if (options?.width && options?.height && options?.container)
+            options.container.style.aspectRatio = options.width / options.height + 'px';
         const { canvas, context } = draw.init(options);
-        panda.context = context;
+        Panda.context = context;
 
-        panda.width = canvas.width;
-        panda.height = canvas.height;
+        Panda.width = canvas.width;
+        Panda.height = canvas.height;
         camera.init(canvas.width, canvas.height);
     },
 
@@ -44,7 +48,7 @@ const panda = {
         load?: () => Promise<void>
     ): Promise<void> {
         if (load) await load();
-        if (!panda.context) throw new Error('please initialize panda using panda.init() x_x');
+        if (!Panda.context) throw new Error('please initialize panda using panda.init() x_x');
         let last = 0;
         let dt = 0;
 
@@ -55,7 +59,7 @@ const panda = {
             update(dt);
             draw();
 
-            panda.frame++;
+            Panda.frame++;
             if (!this.paused) {
                 rafID = window.requestAnimationFrame(loop);
             }
@@ -65,13 +69,68 @@ const panda = {
         loop(0);
     },
 
-    /** Stops the animation. (If you only want to pause, try `panda.paused = true`) */
+    /** Stops the game. (If you only want to pause, try `panda.paused = true`) */
     stop(): void {
         if (!rafID) throw new Error(`can't stop an animation that hasn't begun yet x_x`);
         window.cancelAnimationFrame(rafID);
         this.paused = true;
     },
+
+    // CLASS WRAPPERS //
+    Line(x1: number, y1: number, x2: number, y2: number) {
+        return new Shapes.Line(x1, y1, x2, y2);
+    },
+
+    Circle(x: number, y: number, radius: number) {
+        return new Shapes.Circle(x, y, radius);
+    },
+
+    Rectangle(x: number, y: number, width: number, height: number) {
+        return new Shapes.Rectangle(x, y, width, height);
+    },
+
+    Square(x: number, y: number, length: number) {
+        return new Shapes.Rectangle(x, y, length, length);
+    },
+
+    Polygon(points: [x: number, y: number][]) {
+        return new Shapes.Polygon(points);
+    },
+
+    async Sprite(
+        src: string,
+        options?: { hFrame?: number; vFrame?: number; frame?: number }
+    ): Promise<Shapes.Sprite> {
+        const image = new Image();
+        image.src = src;
+        await image.decode().catch(() => {
+            throw new Error(`couldn't load image ${src} x_x`);
+        });
+        return new Shapes.Sprite(image, options?.hFrame, options?.vFrame, options?.frame);
+    },
+
+    Sound(src: string, { volume }: { volume?: number } = {}): HTMLAudioElement {
+        const audio = new Audio();
+        audio.src = src;
+        audio.volume = volume ?? 1;
+        audio.preload = 'auto';
+        return audio;
+    },
+
+    Vector(x: number, y: number) {
+        return new Vector(x, y);
+    },
 };
 
-export default panda;
-export type Sprite = _Sprite;
+export default Panda;
+
+// export shape types
+export type Line = Shapes.Line;
+export type Circle = Shapes.Circle;
+export type Rectangle = Shapes.Rectangle;
+export type Polygon = Shapes.Polygon;
+export type Sprite = Shapes.Sprite;
+
+// export types
+export { RGB, color };
+export type { Shapes, Vector };

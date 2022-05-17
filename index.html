@@ -16,12 +16,21 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            width: 100%;
+
+            background-color: black;
+            display: grid;
+            place-items: center;
+        }
+
+        #container {
+            height: 100%;
+            aspect-ratio: 3 / 2;
         }
     </style>
 
     <!-- Change `src` attribute to `./dist/examples/{name of example}` to show examples -->
     <script type="module" src="./dist/main.js"></script>
+    <div id="container"></div>
 
 </body>
 

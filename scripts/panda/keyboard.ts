@@ -3,13 +3,13 @@ const keyboard = {
     keys: {} as { [key: string]: boolean },
 
     /** Returns whether the given key is pressed down or not. */
-    getKey(key: string): boolean {
+    key(key: string): boolean {
         return !!this.keys[key];
     },
 
     /** Returns a 1 if `positiveKey` is pressed, and -1 if `negativeKey` is pressed */
-    getAxis(negativeKey: string, positiveKey: string): number {
-        return +keyboard.getKey(positiveKey) - +keyboard.getKey(negativeKey);
+    axis(negativeKey: string, positiveKey: string): number {
+        return +keyboard.key(positiveKey) - +keyboard.key(negativeKey);
     },
 
     /** Fires a callback when a desired key is pressed. Do not call inside `update()`! */

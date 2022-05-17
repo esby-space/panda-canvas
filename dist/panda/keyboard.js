@@ -2,12 +2,12 @@ const keyboard = {
     /** Object showing which keys are pressed down. Recommended to use `panda.keyboard.getKey(btn)` instead. */
     keys: {},
     /** Returns whether the given key is pressed down or not. */
-    getKey(key) {
+    key(key) {
         return !!this.keys[key];
     },
     /** Returns a 1 if `positiveKey` is pressed, and -1 if `negativeKey` is pressed */
-    getAxis(negativeKey, positiveKey) {
-        return +keyboard.getKey(positiveKey) - +keyboard.getKey(negativeKey);
+    axis(negativeKey, positiveKey) {
+        return +keyboard.key(positiveKey) - +keyboard.key(negativeKey);
     },
     /** Fires a callback when a desired key is pressed. Do not call inside `update()`! */
     keyDown(key, callback) {

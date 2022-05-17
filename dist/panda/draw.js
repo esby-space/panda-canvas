@@ -1,5 +1,4 @@
 import camera from './camera.js';
-import Sprite from './sprite.js';
 const draw = {
     canvas: null,
     context: null,
@@ -49,11 +48,11 @@ const draw = {
         if (color)
             draw.color = color;
         if (pattern) {
-            const style = this.context.createPattern(pattern.sprite.image, 'repeat');
+            const style = this.context.createPattern(pattern.image, 'repeat');
             if (!style)
                 throw new Error(`error loading in the pattern x_x`);
-            const scaleX = pattern.width ? pattern.width / pattern.sprite.image.width : 1;
-            const scaleY = pattern.height ? pattern.height / pattern.sprite.image.height : 1;
+            const scaleX = pattern.width ? pattern.width / pattern.image.width : 1;
+            const scaleY = pattern.height ? pattern.height / pattern.image.height : 1;
             this.context.scale(scaleX, scaleY);
             this.context.fillStyle = style;
         }
@@ -64,8 +63,12 @@ const draw = {
         this.context.restore();
         this.context.resetTransform();
     },
-    translate(x, y, { position = 'scene' } = {}) {
-        this.context.translate(x + (position == 'scene' ? camera.offsetX : 0), y + (position == 'scene' ? camera.offsetY : 0));
+    translate(x, y, { position = 1 } = {}) {
+        if (position == 'scene')
+            position = 1;
+        else if (position == 'view')
+            position = 0;
+        this.context.translate(Math.round(x + position * camera.offsetX), Math.round(y + position * camera.offsetY));
     },
     /** Draws a straight line betwen two points. */
     line(x1, y1, x2, y2, { color, position } = {}) {
@@ -113,7 +116,6 @@ const draw = {
     },
     /** Render basic text to the screen. */
     text(text, x, y, { color, position, center = true, font } = {}) {
-        // TODO: implement styles
         this.context.save();
         draw.translate(x, y, { position });
         if (color)
@@ -145,29 +147,19 @@ const draw = {
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
     // SPRITES //
-    Sprite,
     /** Draws a sprite to the screen. */
-    sprite(sprite, x, y, { width, height, center = true, position = 'scene', } = {}) {
-        width = width ?? sprite.image.width;
-        height = height ?? sprite.image.height;
-        const sw = sprite.image.width / sprite.hFrame;
-        const sh = sprite.image.height / sprite.vFrame;
-        const sx = (sprite.frame % sprite.hFrame) * sw;
-        const sy = Math.floor(sprite.frame / sprite.hFrame) * sh;
+    image(image, x, y, { width, height, center = true, position = 'scene', sx = 0, sy = 0, sw, sh, } = {}) {
+        width = width ?? image.width;
+        height = height ?? image.height;
+        sw = sw ?? width;
+        sh = sh ?? height;
         draw.translate(x, y, { position });
-        this.context.drawImage(sprite.image, sx, sy, sw, sh, center ? -width / 2 : 0, center ? -height / 2 : 0, width, height);
+        this.context.drawImage(image, sx, sy, sw, sh, center ? -width / 2 : 0, center ? -height / 2 : 0, width, height);
         this.context.resetTransform();
-    },
-    /** Animates a sprite with the specified frames and frame rate. */
-    animate(sprite, frames, fps) {
-        sprite.animate(frames, fps);
-    },
-    stopAnimation(sprite) {
-        sprite.stopAnimation();
     },
 };
 // COLORS //
-export const colors = {
+const colors = {
     black: [0, 0, 0],
     darkBlue: [29, 43, 83],
     darkPurple: [126, 37, 83],

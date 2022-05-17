@@ -1,15 +1,14 @@
 import camera from './camera.js';
-import Sprite from './sprite.js';
 
-type RGB = [r: number, g: number, b: number];
-type color = keyof typeof colors;
-type DrawOptions =
+export type RGB = [r: number, g: number, b: number];
+export type color = keyof typeof colors;
+export type DrawOptions =
     | {
           color?: RGB | color;
           mode?: 'fill' | 'line';
           center?: boolean;
-          position?: 'scene' | 'view';
-          pattern?: { sprite: Sprite; width?: number; height?: number };
+          position?: 'scene' | 'view' | number;
+          pattern?: { image: HTMLImageElement; width?: number; height?: number };
       }
     | undefined;
 
@@ -77,11 +76,11 @@ const draw = {
 
         if (color) draw.color = color;
         if (pattern) {
-            const style = this.context!.createPattern(pattern.sprite.image, 'repeat');
+            const style = this.context!.createPattern(pattern.image, 'repeat');
             if (!style) throw new Error(`error loading in the pattern x_x`);
 
-            const scaleX = pattern.width ? pattern.width / pattern.sprite.image.width : 1;
-            const scaleY = pattern.height ? pattern.height / pattern.sprite.image.height : 1;
+            const scaleX = pattern.width ? pattern.width / pattern.image.width : 1;
+            const scaleY = pattern.height ? pattern.height / pattern.image.height : 1;
             this.context!.scale(scaleX, scaleY);
             this.context!.fillStyle = style;
         }
@@ -93,10 +92,13 @@ const draw = {
         this.context!.resetTransform();
     },
 
-    translate(x: number, y: number, { position = 'scene' }: DrawOptions = {}): void {
+    translate(x: number, y: number, { position = 1 }: DrawOptions = {}): void {
+        if (position == 'scene') position = 1;
+        else if (position == 'view') position = 0;
+
         this.context!.translate(
-            x + (position == 'scene' ? camera.offsetX : 0),
-            y + (position == 'scene' ? camera.offsetY : 0)
+            Math.round(x + position * camera.offsetX),
+            Math.round(y + position * camera.offsetY)
         );
     },
 
@@ -181,7 +183,6 @@ const draw = {
         y: number,
         { color, position, center = true, font }: DrawOptions & { font?: string } = {}
     ): void {
-        // TODO: implement styles
         this.context!.save();
         draw.translate(x, y, { position });
         if (color) draw.color = color;
@@ -218,10 +219,9 @@ const draw = {
     },
 
     // SPRITES //
-    Sprite,
     /** Draws a sprite to the screen. */
-    sprite(
-        sprite: Sprite,
+    image(
+        image: HTMLImageElement,
         x: number,
         y: number,
         {
@@ -229,24 +229,29 @@ const draw = {
             height,
             center = true,
             position = 'scene',
+            sx = 0,
+            sy = 0,
+            sw,
+            sh,
         }: {
             width?: number;
             height?: number;
             center?: boolean;
             position?: 'scene' | 'view';
+            sx?: number;
+            sy?: number;
+            sw?: number;
+            sh?: number;
         } = {}
     ): void {
-        width = width ?? sprite.image.width;
-        height = height ?? sprite.image.height;
-
-        const sw = sprite.image.width / sprite.hFrame;
-        const sh = sprite.image.height / sprite.vFrame;
-        const sx = (sprite.frame % sprite.hFrame) * sw;
-        const sy = Math.floor(sprite.frame / sprite.hFrame) * sh;
+        width = width ?? image.width;
+        height = height ?? image.height;
+        sw = sw ?? width;
+        sh = sh ?? height;
 
         draw.translate(x, y, { position });
         this.context!.drawImage(
-            sprite.image,
+            image,
             sx,
             sy,
             sw,
@@ -258,19 +263,10 @@ const draw = {
         );
         this.context!.resetTransform();
     },
-
-    /** Animates a sprite with the specified frames and frame rate. */
-    animate(sprite: Sprite, frames: number[], fps: number): void {
-        sprite.animate(frames, fps);
-    },
-
-    stopAnimation(sprite: Sprite): void {
-        sprite.stopAnimation();
-    },
 };
 
 // COLORS //
-export const colors = {
+const colors = {
     black: [0, 0, 0] as RGB,
     darkBlue: [29, 43, 83] as RGB,
     darkPurple: [126, 37, 83] as RGB,

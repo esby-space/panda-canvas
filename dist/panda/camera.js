@@ -20,5 +20,10 @@ const camera = {
     get offsetY() {
         return this.height / 2 - this.y;
     },
+    /** Smoothly moves the camera to where you need to go! Make sure to put this inside your `update()` function. */
+    move(x, y, speed = 1) {
+        this.x = (1 - speed) * this.x + speed * x;
+        this.y = (1 - speed) * this.y + speed * y;
+    },
 };
 export default camera;
