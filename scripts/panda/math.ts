@@ -56,8 +56,60 @@ export class Vector {
     }
 }
 
+export class Complex {
+    r: number;
+    i: number;
+
+    constructor(real: number, imaginary: number) {
+        this.r = real;
+        this.i = imaginary;
+    }
+
+    get magnitude() {
+        return Math.sqrt(this.r ** 2 + this.i ** 2);
+    }
+
+    add(complex: Complex) {
+        const r = this.r + complex.r;
+        const i = this.i + complex.i;
+        return new Complex(r, i);
+    }
+
+    subtract(complex: Complex) {
+        const r = this.r - complex.r;
+        const i = this.i - complex.i;
+        return new Complex(r, i);
+    }
+
+    multiply(complex: Complex) {
+        const r = this.r * complex.r - this.i * complex.i;
+        const i = this.r * complex.i + this.i * complex.r;
+        return new Complex(r, i);
+    }
+
+    power(exponent: number) {
+        let out = new Complex(1, 0);
+        for (let i = 0; i < exponent; i++) {
+            out = out.multiply(this);
+        }
+        return out;
+    }
+
+    square() {
+        const r = (this.r + this.i) * (this.r - this.i);
+        const i = 2 * this.r * this.i;
+        return new Complex(r, i);
+    }
+}
+
 const math = {
-    Vector,
+    Vector(x: number, y: number) {
+        return new Vector(x, y);
+    },
+
+    Complex(r: number, i: number) {
+        return new Complex(r, i);
+    },
 };
 
 export default math;

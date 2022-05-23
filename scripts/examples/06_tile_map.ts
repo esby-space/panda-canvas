@@ -1,5 +1,4 @@
-import Panda, { Rectangle, Vector } from '../panda/panda.js';
-import { map, background } from './map.js';
+import Panda, { Shapes, Math } from '../panda/panda.js';
 Panda.init({
     pixelated: true,
     width: 300,
@@ -10,16 +9,15 @@ Panda.init({
 // global constants
 const TILE_SIZE = 16;
 const GRAVITY = 60;
-const CHUNK_SIZE = 8;
 
 // game objects and assets
 const bai = {
     SPEED: 3,
     ACCELERATION: 20,
     JUMP: 10,
-
     rectangle: Panda.Rectangle(150, 100, 16, 32),
-    velocity: Panda.Vector(0, 0),
+    velocity: Panda.math.Vector(0, 0),
+
     sprite: await Panda.Sprite('./scripts/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
@@ -41,13 +39,39 @@ const bai = {
     },
 };
 
+const background: [parallax: number, rectangle: Shapes.Rectangle][] = [
+    [0.25, Panda.Rectangle(120, 10, 70, 400)],
+    [0.25, Panda.Rectangle(280, 30, 40, 400)],
+    [0.5, Panda.Rectangle(30, 40, 40, 400)],
+    [0.5, Panda.Rectangle(130, 90, 100, 400)],
+    [0.5, Panda.Rectangle(300, 80, 120, 400)],
+];
+
+const mapString = `
+00000000000000000000000000000000000000
+00000000000000000000000000000000000000
+00000000000000000000000000000000000000
+00000000000000000000000000000000000000
+00000002222200000000000000000000000000
+00000000000000000000000000000000222200
+22000000000000000220000002200002111122
+11222222222222222110000221120001111111
+11111111111111111110000111110000111100
+11111111111111111110000011000000001000
+11111111111111111110000010000000000000
+11111111111111111110000010000000000000
+11111111111111111110000000000000000000
+`;
+
+const map = mapString.split(/\n/).map((row) => row.split('').map((tile) => parseInt(tile)));
+
 // sprites and sounds
 const dirt = await Panda.Sprite('./scripts/sprites/dirt.png');
 const grass = await Panda.Sprite('./scripts/sprites/grass.png');
 const jumpSound = Panda.Sound('./scripts/sounds/jump.wav', { volume: 0.5 });
 
 // game map
-let collisionTiles: Rectangle[] = [];
+let collisionTiles: Shapes.Rectangle[] = [];
 for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
         if (map[y][x] == 1 || map[y][x] == 2) {
@@ -59,21 +83,21 @@ for (let y = 0; y < map.length; y++) {
     }
 }
 
-const testCollisions = (rectangle: Rectangle, tiles: Rectangle[]) => {
+const testCollisions = (rectangle: Shapes.Rectangle, tiles: Shapes.Rectangle[]) => {
     return tiles.filter((tile) => rectangle.collides(tile));
 };
 
 // main functions!
 Panda.camera.y -= 50;
 const update = (dt: number) => {
-    const input = Panda.Vector(0, 0);
+    const input = Panda.math.Vector(0, 0);
     input.x = Panda.keyboard.axis('a', 'd');
     input.magnitude = bai.SPEED;
-
     bai.velocity = bai.velocity.moveToward(input, dt * bai.ACCELERATION);
-    bai.velocity.y += GRAVITY * dt;
 
+    bai.velocity.y += GRAVITY * dt;
     move(bai.rectangle, bai.velocity, collisionTiles);
+
     if (bai.rectangle.y > 600) {
         // bai.rectangle.x = 150;
         bai.rectangle.y = 100;
@@ -83,10 +107,10 @@ const update = (dt: number) => {
     Panda.camera.move(bai.rectangle.x, Panda.camera.y, 0.2);
 };
 
-const move = (rectangle: Rectangle, movement: Vector, tiles: Rectangle[]) => {
+const move = (rectangle: Shapes.Rectangle, movement: Math.Vector, tiles: Shapes.Rectangle[]) => {
     rectangle.x += bai.velocity.x;
     let hitList = testCollisions(rectangle, tiles);
-    for (let tile of hitList) {
+    for (const tile of hitList) {
         if (movement.x > 0) {
             rectangle.right = tile.left;
             movement.x = 0;
@@ -95,10 +119,9 @@ const move = (rectangle: Rectangle, movement: Vector, tiles: Rectangle[]) => {
             movement.x = 0;
         }
     }
-
     rectangle.y += bai.velocity.y;
     hitList = testCollisions(rectangle, tiles);
-    for (let tile of hitList) {
+    for (const tile of hitList) {
         if (movement.y > 0) {
             rectangle.bottom = tile.top;
             movement.y = 0;
@@ -123,7 +146,7 @@ const draw = () => {
         center: false,
     });
 
-    for (let [parallax, rectangle] of background) {
+    for (const [parallax, rectangle] of background) {
         rectangle.draw({
             position: parallax,
             color: parallax < 0.5 ? [9, 91, 85] : [14, 222, 150],

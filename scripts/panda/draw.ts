@@ -12,10 +12,10 @@ export type DrawOptions =
       }
     | undefined;
 
-const draw = {
-    canvas: null as HTMLCanvasElement | null,
-    context: null as CanvasRenderingContext2D | null,
+let canvas: HTMLCanvasElement;
+let context: CanvasRenderingContext2D;
 
+const draw = {
     /** Makes and sizes the canvas and context. (You probably want `panda.init()`) */
     init(options?: {
         container?: HTMLElement;
@@ -27,76 +27,76 @@ const draw = {
         context: CanvasRenderingContext2D;
     } {
         const container = options?.container ?? document.body;
-        this.canvas = document.createElement('canvas');
-        container.append(this.canvas);
+        canvas = document.createElement('canvas');
+        container.append(canvas);
 
-        const context = this.canvas.getContext('2d')!;
-        if (!context) throw new Error('error loading in the context x_x');
-        this.context = context;
+        const possibleContext = canvas.getContext('2d');
+        if (!possibleContext) throw new Error('error loading in the context x_x');
+        context = possibleContext;
 
-        let width = options?.width ?? container.clientWidth;
-        let height = options?.height ?? container.clientHeight;
+        const width = options?.width ?? container.clientWidth;
+        const height = options?.height ?? container.clientHeight;
         draw.resize(width, height, container);
 
         draw.backgroundColor = 'black';
         draw.color = 'white';
 
         if (options?.pixelated) {
-            this.canvas.style.imageRendering = 'pixelated';
-            this.context.imageSmoothingEnabled = false;
+            canvas.style.imageRendering = 'pixelated';
+            context.imageSmoothingEnabled = false;
         }
 
-        return { canvas: this.canvas, context: this.context };
+        return { canvas, context };
     },
 
     resize(width: number, height: number, container?: HTMLElement): void {
-        this.canvas!.style.width = (container?.clientWidth ?? width) + 'px';
-        this.canvas!.style.height = (container?.clientHeight ?? height) + 'px';
-        this.canvas!.width = width;
-        this.canvas!.height = height;
+        canvas.style.width = (container?.clientWidth ?? width) + 'px';
+        canvas.style.height = (container?.clientHeight ?? height) + 'px';
+        canvas.width = width;
+        canvas.height = height;
     },
 
     /** The default drawing color panda will use. */
     set color(color: RGB | color) {
         if (typeof color != 'object') color = colors[color];
-        this.context!.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-        this.context!.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        context.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        context.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     },
 
     /** The background color panda will use. */
     set backgroundColor(color: RGB | color) {
         if (typeof color == 'string') color = colors[color];
-        this.canvas!.style.background = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        canvas.style.background = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     },
 
     // SHAPES //
     /** Renders any path for the context. (You probably want `panda.draw.line()`) */
     render({ color, mode = 'fill', pattern }: DrawOptions = {}): void {
-        this.context!.save();
+        context.save();
 
         if (color) draw.color = color;
         if (pattern) {
-            const style = this.context!.createPattern(pattern.image, 'repeat');
+            const style = context.createPattern(pattern.image, 'repeat');
             if (!style) throw new Error(`error loading in the pattern x_x`);
 
             const scaleX = pattern.width ? pattern.width / pattern.image.width : 1;
             const scaleY = pattern.height ? pattern.height / pattern.image.height : 1;
-            this.context!.scale(scaleX, scaleY);
-            this.context!.fillStyle = style;
+            context.scale(scaleX, scaleY);
+            context.fillStyle = style;
         }
 
-        if (mode == 'line') this.context!.stroke();
-        else if (mode == 'fill') this.context!.fill();
+        if (mode == 'line') context.stroke();
+        else if (mode == 'fill') context.fill();
 
-        this.context!.restore();
-        this.context!.resetTransform();
+        context.restore();
+        context.resetTransform();
     },
 
     translate(x: number, y: number, { position = 1 }: DrawOptions = {}): void {
         if (position == 'scene') position = 1;
         else if (position == 'view') position = 0;
 
-        this.context!.translate(
+        context.translate(
             Math.round(x + position * camera.offsetX),
             Math.round(y + position * camera.offsetY)
         );
@@ -111,10 +111,10 @@ const draw = {
         { color, position }: DrawOptions = {}
     ): void {
         draw.translate(x1, y1, { position });
-        this.context!.beginPath();
-        this.context!.moveTo(0, 0);
-        this.context!.lineTo(x2 - x1, y2 - y1);
-        this.context!.closePath();
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(x2 - x1, y2 - y1);
+        context.closePath();
         draw.render({ color });
     },
 
@@ -126,9 +126,9 @@ const draw = {
         { color, mode, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(x, y, { position });
-        this.context!.beginPath();
-        this.context!.arc(0, 0, radius, 0, Math.PI * 2);
-        this.context!.closePath();
+        context.beginPath();
+        context.arc(0, 0, radius, 0, Math.PI * 2);
+        context.closePath();
         draw.render({ color, mode, pattern });
     },
 
@@ -141,9 +141,9 @@ const draw = {
         { color, mode, center = true, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(x, y, { position });
-        this.context!.beginPath();
-        this.context!.rect(center ? -width / 2 : 0, center ? -height / 2 : 0, width, height);
-        this.context!.closePath();
+        context.beginPath();
+        context.rect(center ? -width / 2 : 0, center ? -height / 2 : 0, width, height);
+        context.closePath();
         draw.render({ color, mode, pattern });
     },
 
@@ -155,9 +155,9 @@ const draw = {
         { color, mode, center = true, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(x, y, { position });
-        this.context!.beginPath();
-        this.context!.rect(center ? -length / 2 : 0, center ? -length / 2 : 0, length, length);
-        this.context!.closePath();
+        context.beginPath();
+        context.rect(center ? -length / 2 : 0, center ? -length / 2 : 0, length, length);
+        context.closePath();
         draw.render({ color, mode, pattern });
     },
 
@@ -167,12 +167,12 @@ const draw = {
         { color, mode, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(points[0][0], points[0][1], { position });
-        this.context!.beginPath();
-        this.context!.moveTo(points[0][0], points[0][1]);
+        context.beginPath();
+        context.moveTo(points[0][0], points[0][1]);
         for (let i = 1; i < points.length; i++) {
-            this.context!.lineTo(points[i][0], points[i][1]);
+            context.lineTo(points[i][0], points[i][1]);
         }
-        this.context!.closePath();
+        context.closePath();
         draw.render({ color, mode, pattern });
     },
 
@@ -183,15 +183,15 @@ const draw = {
         y: number,
         { color, position, center = true, font }: DrawOptions & { font?: string } = {}
     ): void {
-        this.context!.save();
+        context.save();
         draw.translate(x, y, { position });
         if (color) draw.color = color;
-        if (font) this.context!.font = font;
+        if (font) context.font = font;
 
-        this.context!.textAlign = center ? 'center' : 'start';
-        this.context!.textBaseline = center ? 'middle' : 'alphabetic';
-        this.context!.fillText(text, 0, 0);
-        this.context!.restore();
+        context.textAlign = center ? 'center' : 'start';
+        context.textBaseline = center ? 'middle' : 'alphabetic';
+        context.fillText(text, 0, 0);
+        context.restore();
     },
 
     /** Define a custom shape with Canvas2D! Automatically begins and ends path, position, and color. */
@@ -202,20 +202,20 @@ const draw = {
         { color, mode, position, pattern }: DrawOptions = {}
     ): void {
         draw.translate(x, y, { position });
-        this.context!.beginPath();
-        callback(draw.context!);
-        this.context!.closePath();
+        context.beginPath();
+        callback(context);
+        context.closePath();
         draw.render({ color, mode, pattern });
     },
 
     /** Clear the screen of all drawings. */
     clear(opacity?: number): void {
         if (opacity) {
-            const prevStyle = this.context!.fillStyle;
-            this.context!.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-            this.context!.fillRect(0, 0, this.canvas!.width, this.canvas!.height);
-            this.context!.fillStyle = prevStyle;
-        } else this.context!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+            const prevStyle = context.fillStyle;
+            context.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = prevStyle;
+        } else context.clearRect(0, 0, canvas.width, canvas.height);
     },
 
     // SPRITES //
@@ -250,7 +250,7 @@ const draw = {
         sh = sh ?? height;
 
         draw.translate(x, y, { position });
-        this.context!.drawImage(
+        context.drawImage(
             image,
             sx,
             sy,
@@ -261,7 +261,7 @@ const draw = {
             width,
             height
         );
-        this.context!.resetTransform();
+        context.resetTransform();
     },
 };
 

@@ -1,9 +1,9 @@
 import keyboard from './keyboard.js';
 import mouse from './mouse.js';
 import camera from './camera.js';
-import draw, { RGB, color } from './draw.js';
+import draw from './draw.js';
 import * as Shapes from './shapes.js';
-import math, { Vector } from './math.js';
+import math, * as Math from './math.js';
 
 let rafID: number | null = null;
 
@@ -116,21 +116,7 @@ const Panda = {
         audio.preload = 'auto';
         return audio;
     },
-
-    Vector(x: number, y: number) {
-        return new Vector(x, y);
-    },
 };
 
 export default Panda;
-
-// export shape types
-export type Line = Shapes.Line;
-export type Circle = Shapes.Circle;
-export type Rectangle = Shapes.Rectangle;
-export type Polygon = Shapes.Polygon;
-export type Sprite = Shapes.Sprite;
-
-// export types
-export { RGB, color };
-export type { Shapes, Vector };
+export { Shapes, Math };

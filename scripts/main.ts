@@ -1,4 +1,4 @@
-import Panda, { Rectangle, Vector } from './panda/panda.js';
+import Panda, { Shapes } from './panda/panda.js';
 Panda.init({
     pixelated: true,
     width: 300,
@@ -18,7 +18,7 @@ const Bai = {
     JUMP: 15,
 
     rectangle: Panda.Rectangle(150, 100, 16, 32),
-    velocity: Panda.Vector(0, 0),
+    velocity: Panda.math.Vector(0, 0),
     sprite: await Panda.Sprite('./scripts/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
@@ -39,10 +39,10 @@ const Bai = {
         else this.sprite.stopAnimation();
     },
 
-    move(tiles: Rectangle[]) {
+    move(tiles: Shapes.Rectangle[]) {
         this.rectangle.x += Bai.velocity.x;
         let hitList = tiles.filter((tile) => this.rectangle.collides(tile));
-        for (let tile of hitList) {
+        for (const tile of hitList) {
             if (this.velocity.x > 0) {
                 this.rectangle.right = tile.left;
                 this.velocity.x = 0;
@@ -54,7 +54,7 @@ const Bai = {
 
         this.rectangle.y += Bai.velocity.y;
         hitList = tiles.filter((tile) => this.rectangle.collides(tile));
-        for (let tile of hitList) {
+        for (const tile of hitList) {
             if (this.velocity.y > 0) {
                 this.rectangle.bottom = tile.top;
                 this.velocity.y = 0;
@@ -78,7 +78,7 @@ const Bai = {
 const dirt = await Panda.Sprite('./scripts/sprites/dirt.png');
 const grass = await Panda.Sprite('./scripts/sprites/grass.png');
 const jumpSound = Panda.Sound('./scripts/sounds/jump.wav', { volume: 0.5 });
-const background: [parallax: number, rectangle: Rectangle][] = [
+const background: [parallax: number, rectangle: Shapes.Rectangle][] = [
     [0, Panda.Rectangle(0, 80, Panda.width, Panda.height)],
     [0.25, Panda.Rectangle(120, 10, 70, 400)],
     [0.25, Panda.Rectangle(280, 30, 40, 400)],
@@ -124,16 +124,16 @@ const Map = {
 
 // main functions!
 const update = (dt: number) => {
-    const input = Panda.Vector(0, 0);
+    const input = Panda.math.Vector(0, 0);
     input.x = Panda.keyboard.axis('a', 'd');
     input.magnitude = Bai.SPEED;
 
     Bai.velocity = Bai.velocity.moveToward(input, dt * Bai.ACCELERATION);
     Bai.velocity.y += GRAVITY * dt;
 
-    let collisionTiles: Rectangle[] = [];
+    let collisionTiles: Shapes.Rectangle[] = [];
     Map.iterateChunks((chunk) => {
-        for (let [type, [x, y]] of chunk) {
+        for (const [type, [x, y]] of chunk) {
             if (type == 1 || type == 2)
                 collisionTiles = [...collisionTiles, Panda.Rectangle(x, y, TILE_SIZE, TILE_SIZE)];
         }
@@ -150,7 +150,7 @@ Panda.keyboard.keyDown(' ', () => Bai.jump());
 const draw = () => {
     Panda.draw.clear();
 
-    for (let [parallax, rectangle] of background) {
+    for (const [parallax, rectangle] of background) {
         rectangle.draw({
             position: parallax,
             color: parallax < 0.5 ? (parallax == 0 ? [7, 80, 75] : [9, 91, 85]) : [14, 222, 150],
@@ -159,7 +159,7 @@ const draw = () => {
     }
 
     Map.iterateChunks((chunk) => {
-        for (let [type, [x, y]] of chunk) {
+        for (const [type, [x, y]] of chunk) {
             if (type == 1) dirt.draw(x, y);
             else if (type == 2) grass.draw(x, y);
         }

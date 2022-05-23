@@ -1,5 +1,4 @@
 import Panda from '../panda/panda.js';
-import { map, background } from './map.js';
 Panda.init({
     pixelated: true,
     width: 300,
@@ -9,14 +8,13 @@ Panda.init({
 // global constants
 const TILE_SIZE = 16;
 const GRAVITY = 60;
-const CHUNK_SIZE = 8;
 // game objects and assets
 const bai = {
     SPEED: 3,
     ACCELERATION: 20,
     JUMP: 10,
     rectangle: Panda.Rectangle(150, 100, 16, 32),
-    velocity: Panda.Vector(0, 0),
+    velocity: Panda.math.Vector(0, 0),
     sprite: await Panda.Sprite('./scripts/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
@@ -38,6 +36,29 @@ const bai = {
             this.sprite.stopAnimation();
     },
 };
+const background = [
+    [0.25, Panda.Rectangle(120, 10, 70, 400)],
+    [0.25, Panda.Rectangle(280, 30, 40, 400)],
+    [0.5, Panda.Rectangle(30, 40, 40, 400)],
+    [0.5, Panda.Rectangle(130, 90, 100, 400)],
+    [0.5, Panda.Rectangle(300, 80, 120, 400)],
+];
+const mapString = `
+00000000000000000000000000000000000000
+00000000000000000000000000000000000000
+00000000000000000000000000000000000000
+00000000000000000000000000000000000000
+00000002222200000000000000000000000000
+00000000000000000000000000000000222200
+22000000000000000220000002200002111122
+11222222222222222110000221120001111111
+11111111111111111110000111110000111100
+11111111111111111110000011000000001000
+11111111111111111110000010000000000000
+11111111111111111110000010000000000000
+11111111111111111110000000000000000000
+`;
+const map = mapString.split(/\n/).map((row) => row.split('').map((tile) => parseInt(tile)));
 // sprites and sounds
 const dirt = await Panda.Sprite('./scripts/sprites/dirt.png');
 const grass = await Panda.Sprite('./scripts/sprites/grass.png');
@@ -60,7 +81,7 @@ const testCollisions = (rectangle, tiles) => {
 // main functions!
 Panda.camera.y -= 50;
 const update = (dt) => {
-    const input = Panda.Vector(0, 0);
+    const input = Panda.math.Vector(0, 0);
     input.x = Panda.keyboard.axis('a', 'd');
     input.magnitude = bai.SPEED;
     bai.velocity = bai.velocity.moveToward(input, dt * bai.ACCELERATION);
@@ -76,7 +97,7 @@ const update = (dt) => {
 const move = (rectangle, movement, tiles) => {
     rectangle.x += bai.velocity.x;
     let hitList = testCollisions(rectangle, tiles);
-    for (let tile of hitList) {
+    for (const tile of hitList) {
         if (movement.x > 0) {
             rectangle.right = tile.left;
             movement.x = 0;
@@ -88,7 +109,7 @@ const move = (rectangle, movement, tiles) => {
     }
     rectangle.y += bai.velocity.y;
     hitList = testCollisions(rectangle, tiles);
-    for (let tile of hitList) {
+    for (const tile of hitList) {
         if (movement.y > 0) {
             rectangle.bottom = tile.top;
             movement.y = 0;
@@ -111,7 +132,7 @@ const draw = () => {
         color: [7, 80, 75],
         center: false,
     });
-    for (let [parallax, rectangle] of background) {
+    for (const [parallax, rectangle] of background) {
         rectangle.draw({
             position: parallax,
             color: parallax < 0.5 ? [9, 91, 85] : [14, 222, 150],

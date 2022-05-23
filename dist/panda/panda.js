@@ -3,7 +3,7 @@ import mouse from './mouse.js';
 import camera from './camera.js';
 import draw from './draw.js';
 import * as Shapes from './shapes.js';
-import math, { Vector } from './math.js';
+import math, * as Math from './math.js';
 let rafID = null;
 const Panda = {
     // UTILIIES //
@@ -88,8 +88,6 @@ const Panda = {
         audio.preload = 'auto';
         return audio;
     },
-    Vector(x, y) {
-        return new Vector(x, y);
-    },
 };
 export default Panda;
+export { Shapes, Math };
