@@ -19,7 +19,7 @@ const Bai = {
 
     rectangle: Panda.Rectangle(150, 100, 16, 32),
     velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.Sprite('./scripts/sprites/bai.png', {
+    sprite: await Panda.Sprite('./scripts/examples/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
     }),
@@ -75,9 +75,9 @@ const Bai = {
 };
 
 // sprites and sounds
-const dirt = await Panda.Sprite('./scripts/sprites/dirt.png');
-const grass = await Panda.Sprite('./scripts/sprites/grass.png');
-const jumpSound = Panda.Sound('./scripts/sounds/jump.wav', { volume: 0.5 });
+const dirt = await Panda.Sprite('./scripts/examples/sprites/dirt.png');
+const grass = await Panda.Sprite('./scripts/examples/sprites/grass.png');
+const jumpSound = Panda.Sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 });
 const background: [parallax: number, rectangle: Shapes.Rectangle][] = [
     [0, Panda.Rectangle(0, 80, Panda.width, Panda.height)],
     [0.25, Panda.Rectangle(120, 10, 70, 400)],
@@ -87,7 +87,7 @@ const background: [parallax: number, rectangle: Shapes.Rectangle][] = [
     [0.5, Panda.Rectangle(300, 80, 120, 400)],
 ];
 
-// game ,map
+// game map
 type chunk = [type: number, position: [x: number, y: number]][];
 const Map = {
     chunks: {} as { [position: string]: chunk },

@@ -15,7 +15,7 @@ const bai = {
     JUMP: 10,
     rectangle: Panda.Rectangle(150, 100, 16, 32),
     velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.Sprite('./scripts/sprites/bai.png', {
+    sprite: await Panda.Sprite('./scripts/examples/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
     }),
@@ -60,9 +60,9 @@ const mapString = `
 `;
 const map = mapString.split(/\n/).map((row) => row.split('').map((tile) => parseInt(tile)));
 // sprites and sounds
-const dirt = await Panda.Sprite('./scripts/sprites/dirt.png');
-const grass = await Panda.Sprite('./scripts/sprites/grass.png');
-const jumpSound = Panda.Sound('./scripts/sounds/jump.wav', { volume: 0.5 });
+const dirt = await Panda.Sprite('./scripts/examples/sprites/dirt.png');
+const grass = await Panda.Sprite('./scripts/examples/sprites/grass.png');
+const jumpSound = Panda.Sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 });
 // game map
 let collisionTiles = [];
 for (let y = 0; y < map.length; y++) {
