@@ -5,7 +5,7 @@ import draw from './draw.js';
 import * as Shapes from './shapes.js';
 import math, * as Math from './math.js';
 
-let rafID: number | null = null;
+let rafID: number;
 
 const Panda = {
     // UTILIIES //

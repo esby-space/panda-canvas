@@ -4,7 +4,7 @@ import camera from './camera.js';
 import draw from './draw.js';
 import * as Shapes from './shapes.js';
 import math, * as Math from './math.js';
-let rafID = null;
+let rafID;
 const Panda = {
     // UTILIIES //
     keyboard,

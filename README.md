@@ -3,11 +3,13 @@
 Panda tries to make Canvas 2D less scary. (Still a work in progress.)
 
 ## Start
+
 ```bash
 git clone --depth 1 https://github.com/esby-space/panda-canvas.git
 cd panda-canvas
 npx tsc
 ```
+
 Then open `index.html` in a browser, and edit `scripts/main.ts`
 
 ## But why?
@@ -24,6 +26,7 @@ context.closePath();
 context.fillStyle = 'red';
 context.fill();
 ```
+
 And we got a red circle! I think we deserve a nap too after writing so much code. Using Panda, this becomes:
 
 ```javascript
@@ -35,33 +38,32 @@ panda.draw.circle(200, 200, 50, { color: 'red' });
 
 ## Examples
 
-![red ball](images/ball.jpg)
-1. Bouncing ball with gravity
+1. **Bouncing ball with gravity**
+   ![red ball](images/ball.jpg)
    - basic drawings
    - basic physics
    - game loop
    - basic keyboard input
 
-![pixel panda](images/panda.jpg)
-2. Controllable player and basic animation
+2. **Controllable player and basic animation**
+   ![pixel panda](images/panda.jpg)
    - sprite loading and rendering
    - sprite animation
    - more keyboard input
    - my really bad pixel art
 
-![orbiting planets](images/orbit.jpg)
 3. Gravity and orbits
+   ![orbiting planets](images/orbit.jpg)
    - more physics
    - more of my really bad pixel art
 
-![pixel panda and platforms](images/platform.jpg)
 4. Basic platformer
+   ![pixel panda and platforms](images/platform.jpg)
     - background
     - collision detection
 
-![bai!](images/bai.jpg)
-5. Basic game
-   - WIP
+5. Tile based platformer
+   ![bai!](images/bai.jpg)
    - sprite animation
    - pixel art "heavily inspired" by [aarthificial](https://www.youtube.com/watch?v=MZrp-FauId4)
 

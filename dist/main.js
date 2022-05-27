@@ -25,7 +25,7 @@ const Bai = {
         if (this.numJumps < 2) {
             this.velocity.y = -this.JUMP;
             this.numJumps++;
-            jumpSound.play();
+            Assets.jumpSound.play();
         }
     },
     animate() {
@@ -71,21 +71,23 @@ const Bai = {
     },
 };
 // sprites and sounds
-const dirt = await Panda.Sprite('./scripts/examples/sprites/dirt.png');
-const grass = await Panda.Sprite('./scripts/examples/sprites/grass.png');
-const jumpSound = Panda.Sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 });
-const background = [
-    [0, Panda.Rectangle(0, 80, Panda.width, Panda.height)],
-    [0.25, Panda.Rectangle(120, 10, 70, 400)],
-    [0.25, Panda.Rectangle(280, 30, 40, 400)],
-    [0.5, Panda.Rectangle(30, 40, 40, 400)],
-    [0.5, Panda.Rectangle(130, 90, 100, 400)],
-    [0.5, Panda.Rectangle(300, 80, 120, 400)],
-];
+const Assets = {
+    dirt: await Panda.Sprite('./scripts/examples/sprites/dirt.png'),
+    grass: await Panda.Sprite('./scripts/examples/sprites/grass.png'),
+    jumpSound: Panda.Sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 }),
+    background: [
+        [0, Panda.Rectangle(0, 80, Panda.width, Panda.height)],
+        [0.25, Panda.Rectangle(120, 10, 70, 400)],
+        [0.25, Panda.Rectangle(280, 30, 40, 400)],
+        [0.5, Panda.Rectangle(30, 40, 40, 400)],
+        [0.5, Panda.Rectangle(130, 90, 100, 400)],
+        [0.5, Panda.Rectangle(300, 80, 120, 400)],
+    ],
+};
 const Map = {
     chunks: {},
     makeChunk(x, y) {
-        let chunk = [];
+        const chunk = [];
         for (let sy = 0; sy < CHUNK_SIZE; sy++) {
             for (let sx = 0; sx < CHUNK_SIZE; sx++) {
                 const tx = x * CHUNK_SIZE + sx;
@@ -95,7 +97,7 @@ const Map = {
                     type = 1; // dirt
                 if (ty == 7)
                     type = 2; // grass
-                chunk = [...chunk, [type, [tx * TILE_SIZE, ty * TILE_SIZE]]];
+                chunk.push([type, [tx * TILE_SIZE, ty * TILE_SIZE]]);
             }
         }
         this.chunks[`${x}, ${y}`] = chunk;
@@ -113,44 +115,49 @@ const Map = {
         }
     },
 };
-// main functions!
-const update = (dt) => {
-    const input = Panda.math.Vector(0, 0);
-    input.x = Panda.keyboard.axis('a', 'd');
-    input.magnitude = Bai.SPEED;
-    Bai.velocity = Bai.velocity.moveToward(input, dt * Bai.ACCELERATION);
-    Bai.velocity.y += GRAVITY * dt;
-    let collisionTiles = [];
-    Map.iterateChunks((chunk) => {
-        for (const [type, [x, y]] of chunk) {
-            if (type == 1 || type == 2)
-                collisionTiles = [...collisionTiles, Panda.Rectangle(x, y, TILE_SIZE, TILE_SIZE)];
-        }
-    });
-    Bai.move(collisionTiles);
-    Bai.animate();
-    Panda.camera.move(Bai.rectangle.x, Bai.rectangle.y, 0.1);
-};
-// jump!
-Panda.keyboard.keyDown(' ', () => Bai.jump());
-const draw = () => {
-    Panda.draw.clear();
-    for (const [parallax, rectangle] of background) {
-        rectangle.draw({
-            position: parallax,
-            color: parallax < 0.5 ? (parallax == 0 ? [7, 80, 75] : [9, 91, 85]) : [14, 222, 150],
-            center: false,
+// main game!
+const Game = {
+    update(dt) {
+        const input = Panda.math.Vector(0, 0);
+        input.x = Panda.keyboard.axis('a', 'd');
+        input.magnitude = Bai.SPEED;
+        Bai.velocity = Bai.velocity.moveToward(input, dt * Bai.ACCELERATION);
+        Bai.velocity.y += GRAVITY * dt;
+        const collisionTiles = [];
+        Map.iterateChunks((chunk) => {
+            for (const [type, [x, y]] of chunk) {
+                if (type == 1 || type == 2) {
+                    collisionTiles.push(Panda.Rectangle(x, y, TILE_SIZE, TILE_SIZE));
+                }
+            }
         });
-    }
-    Map.iterateChunks((chunk) => {
-        for (const [type, [x, y]] of chunk) {
-            if (type == 1)
-                dirt.draw(x, y);
-            else if (type == 2)
-                grass.draw(x, y);
+        Bai.move(collisionTiles);
+        Bai.animate();
+        Panda.camera.move(Bai.rectangle.x, Bai.rectangle.y, 0.1);
+    },
+    draw() {
+        Panda.draw.clear();
+        for (const [parallax, rectangle] of Assets.background) {
+            rectangle.draw({
+                position: parallax,
+                color: parallax < 0.5 ? (parallax == 0 ? [7, 80, 75] : [9, 91, 85]) : [14, 222, 150],
+                center: false,
+            });
         }
-    });
-    Bai.draw();
+        Map.iterateChunks((chunk) => {
+            for (const [type, [x, y]] of chunk) {
+                if (type == 1)
+                    Assets.dirt.draw(x, y);
+                else if (type == 2)
+                    Assets.grass.draw(x, y);
+            }
+        });
+        Bai.draw();
+    },
+    main() {
+        Panda.keyboard.keyDown(' ', () => Bai.jump());
+        Panda.draw.backgroundColor = 'blue';
+        Panda.run(this.update, this.draw);
+    },
 };
-Panda.draw.backgroundColor = 'blue';
-Panda.run(update, draw);
+Game.main();
