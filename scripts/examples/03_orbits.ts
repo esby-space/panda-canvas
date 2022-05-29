@@ -22,9 +22,9 @@ const objects = [Sun, Earth, Mars];
 
 // load in the sprites
 async function load() {
-    Earth.sprite = await Panda.Sprite('./scripts/examples/sprites/earth.png');
-    Mars.sprite = await Panda.Sprite('./scripts/examples/sprites/mars.png');
-    Sun.sprite = await Panda.Sprite('./scripts/examples/sprites/sun.png');
+    Earth.sprite = await Panda.sprite('./scripts/examples/sprites/earth.png');
+    Mars.sprite = await Panda.sprite('./scripts/examples/sprites/mars.png');
+    Sun.sprite = await Panda.sprite('./scripts/examples/sprites/sun.png');
 }
 
 // main update function

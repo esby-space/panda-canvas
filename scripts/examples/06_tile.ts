@@ -15,10 +15,10 @@ const bai = {
     SPEED: 3,
     ACCELERATION: 20,
     JUMP: 10,
-    rectangle: Panda.Rectangle(150, 100, 16, 32),
+    rectangle: Panda.rectangle(150, 100, 16, 32),
     velocity: Panda.math.Vector(0, 0),
 
-    sprite: await Panda.Sprite('./scripts/examples/sprites/bai.png', {
+    sprite: await Panda.sprite('./scripts/examples/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
     }),
@@ -40,11 +40,11 @@ const bai = {
 };
 
 const background: [parallax: number, rectangle: Shapes.Rectangle][] = [
-    [0.25, Panda.Rectangle(120, 10, 70, 400)],
-    [0.25, Panda.Rectangle(280, 30, 40, 400)],
-    [0.5, Panda.Rectangle(30, 40, 40, 400)],
-    [0.5, Panda.Rectangle(130, 90, 100, 400)],
-    [0.5, Panda.Rectangle(300, 80, 120, 400)],
+    [0.25, Panda.rectangle(120, 10, 70, 400)],
+    [0.25, Panda.rectangle(280, 30, 40, 400)],
+    [0.5, Panda.rectangle(30, 40, 40, 400)],
+    [0.5, Panda.rectangle(130, 90, 100, 400)],
+    [0.5, Panda.rectangle(300, 80, 120, 400)],
 ];
 
 const mapString = `
@@ -66,9 +66,9 @@ const mapString = `
 const map = mapString.split(/\n/).map((row) => row.split('').map((tile) => parseInt(tile)));
 
 // sprites and sounds
-const dirt = await Panda.Sprite('./scripts/examples/sprites/dirt.png');
-const grass = await Panda.Sprite('./scripts/examples/sprites/grass.png');
-const jumpSound = Panda.Sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 });
+const dirt = await Panda.sprite('./scripts/examples/sprites/dirt.png');
+const grass = await Panda.sprite('./scripts/examples/sprites/grass.png');
+const jumpSound = Panda.sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 });
 
 // game map
 let collisionTiles: Shapes.Rectangle[] = [];
@@ -77,7 +77,7 @@ for (let y = 0; y < map.length; y++) {
         if (map[y][x] == 1 || map[y][x] == 2) {
             collisionTiles = [
                 ...collisionTiles,
-                Panda.Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE),
+                Panda.rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE),
             ];
         }
     }
@@ -104,7 +104,7 @@ const update = (dt: number) => {
     }
 
     bai.animate();
-    Panda.camera.move(bai.rectangle.x, Panda.camera.y, 0.2);
+    Panda.camera.move(bai.rectangle.x, bai.rectangle.y, 0.2);
 };
 
 const move = (rectangle: Shapes.Rectangle, movement: Math.Vector, tiles: Shapes.Rectangle[]) => {

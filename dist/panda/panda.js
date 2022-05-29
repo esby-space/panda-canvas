@@ -65,22 +65,22 @@ const Panda = {
         this.paused = true;
     },
     // CLASS WRAPPERS //
-    Line(x1, y1, x2, y2) {
+    line(x1, y1, x2, y2) {
         return new Shapes.Line(x1, y1, x2, y2);
     },
-    Circle(x, y, radius) {
+    circle(x, y, radius) {
         return new Shapes.Circle(x, y, radius);
     },
-    Rectangle(x, y, width, height) {
+    rectangle(x, y, width, height) {
         return new Shapes.Rectangle(x, y, width, height);
     },
-    Square(x, y, length) {
+    square(x, y, length) {
         return new Shapes.Rectangle(x, y, length, length);
     },
-    Polygon(points) {
+    polygon(points) {
         return new Shapes.Polygon(points);
     },
-    async Sprite(src, options) {
+    async sprite(src, options) {
         const image = new Image();
         image.src = src;
         await image.decode().catch(() => {
@@ -88,7 +88,7 @@ const Panda = {
         });
         return new Shapes.Sprite(image, options?.hFrame, options?.vFrame, options?.frame);
     },
-    Sound(src, { volume } = {}) {
+    sound(src, { volume } = {}) {
         const audio = new Audio();
         audio.src = src;
         audio.volume = volume ?? 1;

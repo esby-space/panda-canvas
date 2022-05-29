@@ -4,12 +4,12 @@ Panda.init({ pixelated: true, container: document.querySelector('#container') as
 // panda player and platforms!
 // collision detection and handling
 
-const bricks = await Panda.Sprite('./scripts/examples/sprites/bricks.png');
+const bricks = await Panda.sprite('./scripts/examples/sprites/bricks.png');
 const player = {
     x: Panda.width / 2,
     y: Panda.height - 50,
     velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.Sprite('./scripts/examples/sprites/panda.png', {
+    sprite: await Panda.sprite('./scripts/examples/sprites/panda.png', {
         hFrame: 3,
         vFrame: 4,
     }),

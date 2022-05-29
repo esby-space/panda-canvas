@@ -85,27 +85,27 @@ const Panda = {
     },
 
     // CLASS WRAPPERS //
-    Line(x1: number, y1: number, x2: number, y2: number) {
+    line(x1: number, y1: number, x2: number, y2: number) {
         return new Shapes.Line(x1, y1, x2, y2);
     },
 
-    Circle(x: number, y: number, radius: number) {
+    circle(x: number, y: number, radius: number) {
         return new Shapes.Circle(x, y, radius);
     },
 
-    Rectangle(x: number, y: number, width: number, height: number) {
+    rectangle(x: number, y: number, width: number, height: number) {
         return new Shapes.Rectangle(x, y, width, height);
     },
 
-    Square(x: number, y: number, length: number) {
+    square(x: number, y: number, length: number) {
         return new Shapes.Rectangle(x, y, length, length);
     },
 
-    Polygon(points: [x: number, y: number][]) {
+    polygon(points: [x: number, y: number][]) {
         return new Shapes.Polygon(points);
     },
 
-    async Sprite(
+    async sprite(
         src: string,
         options?: { hFrame?: number; vFrame?: number; frame?: number }
     ): Promise<Shapes.Sprite> {
@@ -117,7 +117,7 @@ const Panda = {
         return new Shapes.Sprite(image, options?.hFrame, options?.vFrame, options?.frame);
     },
 
-    Sound(src: string, { volume }: { volume?: number } = {}): HTMLAudioElement {
+    sound(src: string, { volume }: { volume?: number } = {}): HTMLAudioElement {
         const audio = new Audio();
         audio.src = src;
         audio.volume = volume ?? 1;

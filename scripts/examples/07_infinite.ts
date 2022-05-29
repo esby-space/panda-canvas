@@ -17,9 +17,9 @@ const Bai = {
     ACCELERATION: 20,
     JUMP: 10,
 
-    rectangle: Panda.Rectangle(150, 100, 16, 32),
+    rectangle: Panda.rectangle(150, 100, 16, 32),
     velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.Sprite('./scripts/examples/sprites/bai.png', {
+    sprite: await Panda.sprite('./scripts/examples/sprites/bai.png', {
         vFrame: 2,
         hFrame: 8,
     }),
@@ -76,16 +76,16 @@ const Bai = {
 
 // sprites and sounds
 const Assets = {
-    dirt: await Panda.Sprite('./scripts/examples/sprites/dirt.png'),
-    grass: await Panda.Sprite('./scripts/examples/sprites/grass.png'),
-    jumpSound: Panda.Sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 }),
+    dirt: await Panda.sprite('./scripts/examples/sprites/dirt.png'),
+    grass: await Panda.sprite('./scripts/examples/sprites/grass.png'),
+    jumpSound: Panda.sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 }),
     background: [
-        [0, Panda.Rectangle(0, 80, Panda.width, Panda.height)],
-        [0.25, Panda.Rectangle(120, 10, 70, 400)],
-        [0.25, Panda.Rectangle(280, 30, 40, 400)],
-        [0.5, Panda.Rectangle(30, 40, 40, 400)],
-        [0.5, Panda.Rectangle(130, 90, 100, 400)],
-        [0.5, Panda.Rectangle(300, 80, 120, 400)],
+        [0, Panda.rectangle(0, 80, Panda.width, Panda.height)],
+        [0.25, Panda.rectangle(120, 10, 70, 400)],
+        [0.25, Panda.rectangle(280, 30, 40, 400)],
+        [0.5, Panda.rectangle(30, 40, 40, 400)],
+        [0.5, Panda.rectangle(130, 90, 100, 400)],
+        [0.5, Panda.rectangle(300, 80, 120, 400)],
     ] as [parallax: number, rectangle: Shapes.Rectangle][],
 };
 
@@ -148,7 +148,7 @@ const Game = {
         Map.iterateChunks((chunk) => {
             for (const [type, [x, y]] of chunk) {
                 if (type == 'dirt' || type == 'grass')
-                    collisionTiles.push(Panda.Rectangle(x, y, TILE_SIZE, TILE_SIZE));
+                    collisionTiles.push(Panda.rectangle(x, y, TILE_SIZE, TILE_SIZE));
             }
         }, Bai.rectangle);
 

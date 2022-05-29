@@ -11,7 +11,7 @@ const bai = {
     width: 100,
     height: 200,
     velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.Sprite('./scripts/examples/sprites/bai.png', {
+    sprite: await Panda.sprite('./scripts/examples/sprites/bai.png', {
         hFrame: 8,
         vFrame: 2,
     }),
@@ -19,7 +19,7 @@ const bai = {
 
 const trees = {
     xs: [] as number[],
-    sprite: await Panda.Sprite('./scripts/examples/sprites/tree.png'),
+    sprite: await Panda.sprite('./scripts/examples/sprites/tree.png'),
 };
 for (let i = 0; i < 20; i++) {
     trees.xs = [...trees.xs, Math.random() * WORLD_WIDTH - WORLD_WIDTH / 2];

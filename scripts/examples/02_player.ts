@@ -8,7 +8,7 @@ const player = {
     x: Panda.width / 2,
     y: Panda.height / 2,
     velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.Sprite('./scripts/examples/sprites/panda.png', {
+    sprite: await Panda.sprite('./scripts/examples/sprites/panda.png', {
         hFrame: 3,
         vFrame: 4,
     }),
