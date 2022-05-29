@@ -28,6 +28,12 @@ const Panda = {
         width?: number;
         height?: number;
     }): void {
+        if (options?.container) {
+            for (let i = 0; i < options.container.children.length; i++) {
+                options.container.children[i].remove();
+            }
+        }
+
         if (options?.width && options?.height && options?.container)
             options.container.style.aspectRatio = options.width / options.height + 'px';
         const { canvas, context } = draw.init(options);
@@ -49,6 +55,8 @@ const Panda = {
     ): Promise<void> {
         if (load) await load();
         if (!Panda.context) throw new Error('please initialize panda using panda.init() x_x');
+        if (rafID) this.stop();
+
         let last = 0;
         let dt = 0;
 

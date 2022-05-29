@@ -1,3 +1,4 @@
+import SimplexNoise from './lib/simplex-noise.js';
 export class Vector {
     x;
     y;
@@ -46,6 +47,9 @@ export class Vector {
         direction.magnitude > delta && (direction.magnitude = delta);
         return this.add(direction);
     }
+    dot(vector) {
+        return this.x * vector.x + this.y * vector.y;
+    }
 }
 export class Complex {
     r;
@@ -91,6 +95,10 @@ const math = {
     },
     Complex(r, i) {
         return new Complex(r, i);
+    },
+    /** Deterministic simplex noise generator suitable for 2D, 3D and 4D spaces. Made by Jonas Wanger: <https://github.com/jwagner/simplex-noise.js> */
+    noise(seed = Math.random()) {
+        return new SimplexNoise(seed);
     },
 };
 export default math;

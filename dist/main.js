@@ -13,7 +13,7 @@ const CHUNK_SIZE = 8;
 const Bai = {
     SPEED: 3,
     ACCELERATION: 20,
-    JUMP: 15,
+    JUMP: 10,
     rectangle: Panda.Rectangle(150, 100, 16, 32),
     velocity: Panda.math.Vector(0, 0),
     sprite: await Panda.Sprite('./scripts/examples/sprites/bai.png', {
@@ -86,17 +86,19 @@ const Assets = {
 };
 const Map = {
     chunks: {},
+    noise: Panda.math.noise(),
     makeChunk(x, y) {
         const chunk = [];
-        for (let sy = 0; sy < CHUNK_SIZE; sy++) {
-            for (let sx = 0; sx < CHUNK_SIZE; sx++) {
+        for (let sx = 0; sx < CHUNK_SIZE; sx++) {
+            for (let sy = 0; sy < CHUNK_SIZE; sy++) {
                 const tx = x * CHUNK_SIZE + sx;
                 const ty = y * CHUNK_SIZE + sy;
-                let type = 0; // air
-                if (ty > 7)
-                    type = 1; // dirt
-                if (ty == 7)
-                    type = 2; // grass
+                const noise = Math.floor(this.noise.noise2D(tx / 20, 0) * 4) + 7;
+                let type = 'air'; // air
+                if (ty == noise)
+                    type = 'grass'; // grass
+                if (ty > noise)
+                    type = 'dirt'; // dirt
                 chunk.push([type, [tx * TILE_SIZE, ty * TILE_SIZE]]);
             }
         }
@@ -126,7 +128,7 @@ const Game = {
         const collisionTiles = [];
         Map.iterateChunks((chunk) => {
             for (const [type, [x, y]] of chunk) {
-                if (type == 1 || type == 2) {
+                if (type == 'dirt' || type == 'grass') {
                     collisionTiles.push(Panda.Rectangle(x, y, TILE_SIZE, TILE_SIZE));
                 }
             }
@@ -146,9 +148,9 @@ const Game = {
         }
         Map.iterateChunks((chunk) => {
             for (const [type, [x, y]] of chunk) {
-                if (type == 1)
+                if (type == 'dirt')
                     Assets.dirt.draw(x, y);
-                else if (type == 2)
+                else if (type == 'grass')
                     Assets.grass.draw(x, y);
             }
         });
