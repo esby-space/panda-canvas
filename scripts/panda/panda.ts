@@ -35,7 +35,7 @@ const Panda = {
         }
 
         if (options?.width && options?.height && options?.container)
-            options.container.style.aspectRatio = options.width / options.height + 'px';
+            options.container.style.aspectRatio = `${options.width / options.height}`;
         const { canvas, context } = draw.init(options);
         Panda.context = context;
 

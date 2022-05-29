@@ -1,14 +1,14 @@
 import Panda from './panda/panda.js';
 Panda.init({
     pixelated: true,
-    width: 300,
-    height: 200,
+    width: 450,
+    height: 300,
     container: document.querySelector('#container'),
 });
 // global constants
 const GRAVITY = 40;
-const TILE_SIZE = 16;
-const CHUNK_SIZE = 8;
+const TILE_SIZE = 16; // pixels per tile
+const CHUNK_SIZE = 8; // tiles per chunk
 // game objects and assets
 const Bai = {
     SPEED: 3,
@@ -93,6 +93,7 @@ const Map = {
             for (let sy = 0; sy < CHUNK_SIZE; sy++) {
                 const tx = x * CHUNK_SIZE + sx;
                 const ty = y * CHUNK_SIZE + sy;
+                // terrain generation code!
                 const noise = Math.floor(this.noise.noise2D(tx / 20, 0) * 4) + 7;
                 let type = 'air'; // air
                 if (ty == noise)
@@ -104,14 +105,13 @@ const Map = {
         }
         this.chunks[`${x}, ${y}`] = chunk;
     },
-    iterateChunks(callback) {
-        for (let y = -2; y < Math.ceil(Panda.height / TILE_SIZE / CHUNK_SIZE); y++) {
-            for (let x = -2; x < Math.ceil(Panda.width / TILE_SIZE / CHUNK_SIZE); x++) {
-                const tx = Math.floor(Panda.camera.x / TILE_SIZE / CHUNK_SIZE) + x;
-                const ty = Math.floor(Panda.camera.y / TILE_SIZE / CHUNK_SIZE) + y;
-                const position = `${tx}, ${ty}`;
+    // iterate over all the visible chunks, saves the computer from rendering too many tiles
+    iterateChunks(callback, target) {
+        for (let cy = Math.floor((target.y - Panda.height / 2) / CHUNK_SIZE / TILE_SIZE); cy < Math.ceil((target.y + Panda.height / 2) / CHUNK_SIZE / TILE_SIZE); cy++) {
+            for (let cx = Math.floor((target.x - Panda.width / 2) / CHUNK_SIZE / TILE_SIZE); cx < Math.ceil((target.x + Panda.width / 2) / CHUNK_SIZE / TILE_SIZE); cx++) {
+                const position = `${cx}, ${cy}`;
                 if (!this.chunks[position])
-                    this.makeChunk(tx, ty);
+                    this.makeChunk(cx, cy);
                 callback(this.chunks[position]);
             }
         }
@@ -128,11 +128,10 @@ const Game = {
         const collisionTiles = [];
         Map.iterateChunks((chunk) => {
             for (const [type, [x, y]] of chunk) {
-                if (type == 'dirt' || type == 'grass') {
+                if (type == 'dirt' || type == 'grass')
                     collisionTiles.push(Panda.Rectangle(x, y, TILE_SIZE, TILE_SIZE));
-                }
             }
-        });
+        }, Bai.rectangle);
         Bai.move(collisionTiles);
         Bai.animate();
         Panda.camera.move(Bai.rectangle.x, Bai.rectangle.y, 0.1);
@@ -153,11 +152,12 @@ const Game = {
                 else if (type == 'grass')
                     Assets.grass.draw(x, y);
             }
-        });
+        }, Panda.camera);
         Bai.draw();
     },
     main() {
         Panda.keyboard.keyDown(' ', () => Bai.jump());
+        Panda.camera.move(Bai.rectangle.x, Bai.rectangle.y);
         Panda.draw.backgroundColor = 'blue';
         Panda.run(this.update, this.draw);
     },

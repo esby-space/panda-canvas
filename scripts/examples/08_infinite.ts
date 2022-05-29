@@ -1,4 +1,4 @@
-import Panda, { Shapes } from './panda/panda.js';
+import Panda, { Shapes } from '../panda/panda.js';
 Panda.init({
     pixelated: true,
     width: 450,
