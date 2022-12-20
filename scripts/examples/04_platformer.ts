@@ -1,15 +1,15 @@
-import Panda from '../panda/panda.js';
-Panda.init({ pixelated: true, container: document.querySelector('#container') as HTMLElement });
+import { Panda, Mathy } from "../panda/panda.js";
+Panda.init({ pixelated: true, container: document.querySelector("#container") as HTMLElement });
 
 // panda player and platforms!
 // collision detection and handling
 
-const bricks = await Panda.sprite('./scripts/examples/sprites/bricks.png');
+const bricks = await Panda.sprite("./scripts/examples/sprites/bricks.png");
 const player = {
     x: Panda.width / 2,
     y: Panda.height - 50,
-    velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.sprite('./scripts/examples/sprites/panda.png', {
+    velocity: new Mathy.Vector(0, 0),
+    sprite: await Panda.sprite("./scripts/examples/sprites/panda.png", {
         hFrame: 3,
         vFrame: 4,
     }),
@@ -21,16 +21,13 @@ class Platform {
 }
 let platforms: Platform[] = [];
 for (let i = 0; i < 10; i++) {
-    platforms = [
-        ...platforms,
-        new Platform(Math.random() * Panda.width, Math.random() * Panda.height),
-    ];
+    platforms = [...platforms, new Platform(Math.random() * Panda.width, Math.random() * Panda.height)];
 }
 
 function update(dt: number) {
     // input
-    const inputVector = Panda.math.Vector(0, 0);
-    inputVector.x = Panda.keyboard.axis('a', 'd');
+    const inputVector = new Mathy.Vector(0, 0);
+    inputVector.x = Panda.keyboard.axis("a", "d");
     inputVector.magnitude = 20;
     player.velocity = player.velocity.moveToward(inputVector, dt * 100);
 
@@ -73,7 +70,7 @@ function update(dt: number) {
     else player.sprite.stopAnimation();
 }
 
-Panda.keyboard.keyDown(' ', jump);
+Panda.keyboard.keyDown(" ", jump);
 
 let numJumps = 0;
 function jump() {
@@ -89,7 +86,7 @@ function draw() {
     });
 
     for (const platform of platforms) {
-        Panda.draw.rectangle(platform.x, platform.y, 150, 20, { color: 'black' });
+        Panda.draw.rectangle(platform.x, platform.y, 150, 20, { color: "black" });
     }
 
     player.sprite.draw(player.x, player.y, {

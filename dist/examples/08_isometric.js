@@ -1,11 +1,11 @@
-import Panda from '../panda/panda.js';
+import { Panda, Mathy } from "../panda/panda.js";
 Panda.init({
     pixelated: true,
-    container: document.querySelector('#container'),
+    container: document.querySelector("#container"),
 });
 const TILE_SIZE = 96;
 const Grid = {
-    sprite: await Panda.sprite('./scripts/examples/sprites/3Dgrass.png'),
+    sprite: await Panda.sprite("./scripts/examples/sprites/3Dgrass.png"),
     toAbsolute(x, y) {
         return {
             x: (x - y) / 2,
@@ -31,10 +31,10 @@ const Grid = {
     },
 };
 const Player = {
-    sprite: await Panda.sprite('./scripts/examples/sprites/panda.png', { hFrame: 3, vFrame: 4 }),
+    sprite: await Panda.sprite("./scripts/examples/sprites/panda.png", { hFrame: 3, vFrame: 4 }),
     x: 14,
     y: -1,
-    velocity: Panda.math.Vector(0, 0),
+    velocity: new Mathy.Vector(0, 0),
     z: 0,
     zVelocity: 0,
     get absolute() {
@@ -45,14 +45,14 @@ const Player = {
         };
     },
     events() {
-        Panda.keyboard.keyDown(' ', () => {
+        Panda.keyboard.keyDown(" ", () => {
             this.zVelocity = -15;
         });
     },
     update(dt) {
-        const inputVector = Panda.math.Vector(0, 0);
-        inputVector.x = Panda.keyboard.axis('a', 'd');
-        inputVector.y = Panda.keyboard.axis('w', 's');
+        const inputVector = new Mathy.Vector(0, 0);
+        inputVector.x = Panda.keyboard.axis("a", "d");
+        inputVector.y = Panda.keyboard.axis("w", "s");
         inputVector.magnitude = 1 / 5; // speed of the panda
         // update the velocity to the input, use dt for consistent movement
         this.velocity = this.velocity.moveToward(inputVector, dt * 2);
@@ -83,7 +83,7 @@ const Game = {
         Player.draw();
     },
     main() {
-        Panda.draw.backgroundColor = 'darkBlue';
+        Panda.draw.backgroundColor = "darkBlue";
         Panda.run(this.update, this.draw);
         Player.events();
     },

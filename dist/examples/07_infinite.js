@@ -1,9 +1,9 @@
-import Panda from '../panda/panda.js';
+import { Panda, Shapes, Mathy } from "../panda/panda.js";
 Panda.init({
     pixelated: true,
     width: 450,
     height: 300,
-    container: document.querySelector('#container'),
+    container: document.querySelector("#container"),
 });
 // global constants
 const GRAVITY = 40;
@@ -14,9 +14,9 @@ const Bai = {
     SPEED: 3,
     ACCELERATION: 20,
     JUMP: 10,
-    rectangle: Panda.rectangle(150, 100, 16, 32),
-    velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.sprite('./scripts/examples/sprites/bai.png', {
+    rectangle: new Shapes.Rectangle(150, 100, 16, 32),
+    velocity: new Mathy.Vector(0, 0),
+    sprite: await Panda.sprite("./scripts/examples/sprites/bai.png", {
         vFrame: 2,
         hFrame: 8,
     }),
@@ -72,21 +72,21 @@ const Bai = {
 };
 // sprites and sounds
 const Assets = {
-    dirt: await Panda.sprite('./scripts/examples/sprites/dirt.png'),
-    grass: await Panda.sprite('./scripts/examples/sprites/grass.png'),
-    jumpSound: Panda.sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 }),
+    dirt: await Panda.sprite("./scripts/examples/sprites/dirt.png"),
+    grass: await Panda.sprite("./scripts/examples/sprites/grass.png"),
+    jumpSound: Panda.sound("./scripts/examples/sounds/jump.wav", { volume: 0.5 }),
     background: [
-        [0, Panda.rectangle(0, 80, Panda.width, Panda.height)],
-        [0.25, Panda.rectangle(120, 10, 70, 400)],
-        [0.25, Panda.rectangle(280, 30, 40, 400)],
-        [0.5, Panda.rectangle(30, 40, 40, 400)],
-        [0.5, Panda.rectangle(130, 90, 100, 400)],
-        [0.5, Panda.rectangle(300, 80, 120, 400)],
+        [0, new Shapes.Rectangle(0, 80, Panda.width, Panda.height)],
+        [0.25, new Shapes.Rectangle(120, 10, 70, 400)],
+        [0.25, new Shapes.Rectangle(280, 30, 40, 400)],
+        [0.5, new Shapes.Rectangle(30, 40, 40, 400)],
+        [0.5, new Shapes.Rectangle(130, 90, 100, 400)],
+        [0.5, new Shapes.Rectangle(300, 80, 120, 400)],
     ],
 };
 const Map = {
     chunks: {},
-    noise: Panda.math.noise(),
+    noise: new Mathy.Noise(),
     makeChunk(x, y) {
         const chunk = [];
         for (let sx = 0; sx < CHUNK_SIZE; sx++) {
@@ -95,11 +95,11 @@ const Map = {
                 const ty = y * CHUNK_SIZE + sy;
                 // terrain generation code!
                 const noise = Math.floor(this.noise.noise2D(tx / 20, 0) * 4) + 7;
-                let type = 'air'; // air
+                let type = "air"; // air
                 if (ty == noise)
-                    type = 'grass'; // grass
+                    type = "grass"; // grass
                 if (ty > noise)
-                    type = 'dirt'; // dirt
+                    type = "dirt"; // dirt
                 chunk.push([type, [tx * TILE_SIZE, ty * TILE_SIZE]]);
             }
         }
@@ -120,16 +120,16 @@ const Map = {
 // main game!
 const Game = {
     update(dt) {
-        const input = Panda.math.Vector(0, 0);
-        input.x = Panda.keyboard.axis('a', 'd');
+        const input = new Mathy.Vector(0, 0);
+        input.x = Panda.keyboard.axis("a", "d");
         input.magnitude = Bai.SPEED;
         Bai.velocity = Bai.velocity.moveToward(input, dt * Bai.ACCELERATION);
         Bai.velocity.y += GRAVITY * dt;
         const collisionTiles = [];
         Map.iterateChunks((chunk) => {
             for (const [type, [x, y]] of chunk) {
-                if (type == 'dirt' || type == 'grass')
-                    collisionTiles.push(Panda.rectangle(x, y, TILE_SIZE, TILE_SIZE));
+                if (type == "dirt" || type == "grass")
+                    collisionTiles.push(new Shapes.Rectangle(x, y, TILE_SIZE, TILE_SIZE));
             }
         }, Bai.rectangle);
         Bai.move(collisionTiles);
@@ -147,18 +147,18 @@ const Game = {
         }
         Map.iterateChunks((chunk) => {
             for (const [type, [x, y]] of chunk) {
-                if (type == 'dirt')
+                if (type == "dirt")
                     Assets.dirt.draw(x, y);
-                else if (type == 'grass')
+                else if (type == "grass")
                     Assets.grass.draw(x, y);
             }
         }, Panda.camera);
         Bai.draw();
     },
     main() {
-        Panda.keyboard.keyDown(' ', () => Bai.jump());
+        Panda.keyboard.keyDown(" ", () => Bai.jump());
         Panda.camera.move(Bai.rectangle.x, Bai.rectangle.y);
-        Panda.draw.backgroundColor = 'blue';
+        Panda.draw.backgroundColor = "blue";
         Panda.run(this.update, this.draw);
     },
 };

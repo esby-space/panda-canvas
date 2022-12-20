@@ -1,9 +1,9 @@
-import keyboard from './keyboard.js';
-import mouse from './mouse.js';
-import camera from './camera.js';
-import draw from './draw.js';
-import * as Shapes from './shapes.js';
-import math, * as Math from './math.js';
+import keyboard from "./keyboard.js";
+import mouse from "./mouse.js";
+import camera from "./camera.js";
+import draw from "./draw.js";
+import * as Shapes from "./shapes.js";
+import * as Mathy from "./math.js";
 
 let rafID: number;
 
@@ -13,7 +13,6 @@ const Panda = {
     mouse,
     camera,
     draw,
-    math,
 
     // MAIN //
     width: 0,
@@ -22,12 +21,7 @@ const Panda = {
     context: null as CanvasRenderingContext2D | null,
 
     /** Makes canvas and system variables. Run before calling `panda.run`! */
-    init(options?: {
-        container?: HTMLElement;
-        pixelated?: boolean;
-        width?: number;
-        height?: number;
-    }): void {
+    init(options?: { container?: HTMLElement; pixelated?: boolean; width?: number; height?: number }): void {
         if (options?.container) {
             for (let i = 0; i < options.container.children.length; i++) {
                 options.container.children[i].remove();
@@ -48,13 +42,9 @@ const Panda = {
     paused: true,
 
     /** The main game loop! `update(dt)` and `draw()` run every frame. `load()` runs before the loop.  */
-    async run(
-        update: (dt: number) => void,
-        draw: () => void,
-        load?: () => Promise<void>
-    ): Promise<void> {
+    async run(update: (dt: number) => void, draw: () => void, load?: () => Promise<void>): Promise<void> {
         if (load) await load();
-        if (!Panda.context) throw new Error('please initialize panda using panda.init() x_x');
+        if (!Panda.context) throw new Error("please initialize panda using panda.init() x_x");
         if (rafID) this.stop();
 
         let last = 0;
@@ -64,13 +54,13 @@ const Panda = {
             dt = (time - last) / 1000;
             last = time;
 
-            update(dt);
-            draw();
-
-            Panda.frame++;
             if (!this.paused) {
-                rafID = window.requestAnimationFrame(loop);
+                update(dt);
+                draw();
+                Panda.frame++;
             }
+
+            rafID = window.requestAnimationFrame(loop);
         };
 
         this.paused = false;
@@ -84,31 +74,7 @@ const Panda = {
         this.paused = true;
     },
 
-    // CLASS WRAPPERS //
-    line(x1: number, y1: number, x2: number, y2: number) {
-        return new Shapes.Line(x1, y1, x2, y2);
-    },
-
-    circle(x: number, y: number, radius: number) {
-        return new Shapes.Circle(x, y, radius);
-    },
-
-    rectangle(x: number, y: number, width: number, height: number) {
-        return new Shapes.Rectangle(x, y, width, height);
-    },
-
-    square(x: number, y: number, length: number) {
-        return new Shapes.Rectangle(x, y, length, length);
-    },
-
-    polygon(points: [x: number, y: number][]) {
-        return new Shapes.Polygon(points);
-    },
-
-    async sprite(
-        src: string,
-        options?: { hFrame?: number; vFrame?: number; frame?: number }
-    ): Promise<Shapes.Sprite> {
+    async sprite(src: string, options?: { hFrame?: number; vFrame?: number; frame?: number }): Promise<Shapes.Sprite> {
         const image = new Image();
         image.src = src;
         await image.decode().catch(() => {
@@ -121,10 +87,9 @@ const Panda = {
         const audio = new Audio();
         audio.src = src;
         audio.volume = volume ?? 1;
-        audio.preload = 'auto';
+        audio.preload = "auto";
         return audio;
     },
 };
 
-export default Panda;
-export { Shapes, Math };
+export { Panda, Shapes, Mathy };

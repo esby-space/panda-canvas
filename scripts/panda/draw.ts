@@ -4,12 +4,12 @@ export type RGB = [r: number, g: number, b: number];
 export type color = keyof typeof colors;
 export type DrawOptions =
     | {
-          color?: RGB | color;
-          mode?: 'fill' | 'line';
-          center?: boolean;
-          position?: 'scene' | 'view' | number;
-          pattern?: { image: HTMLImageElement; width?: number; height?: number };
-      }
+        color?: RGB | color;
+        mode?: 'fill' | 'line';
+        center?: boolean;
+        position?: 'scene' | 'view' | number;
+        pattern?: { image: HTMLImageElement; width?: number; height?: number };
+    }
     | undefined;
 
 let canvas: HTMLCanvasElement;
@@ -233,6 +233,7 @@ const draw = {
             sy = 0,
             sw,
             sh,
+            flip = false
         }: {
             width?: number;
             height?: number;
@@ -242,6 +243,7 @@ const draw = {
             sy?: number;
             sw?: number;
             sh?: number;
+            flip?: boolean
         } = {}
     ): void {
         width = width ?? image.width;
@@ -250,6 +252,7 @@ const draw = {
         sh = sh ?? height;
 
         draw.translate(x, y, { position });
+        if (flip) context.scale(-1, 1);
         context.drawImage(
             image,
             sx,

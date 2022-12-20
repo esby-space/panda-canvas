@@ -148,12 +148,14 @@ const draw = {
     },
     // SPRITES //
     /** Draws a sprite to the screen. */
-    image(image, x, y, { width, height, center = true, position = 'scene', sx = 0, sy = 0, sw, sh, } = {}) {
+    image(image, x, y, { width, height, center = true, position = 'scene', sx = 0, sy = 0, sw, sh, flip = false } = {}) {
         width = width ?? image.width;
         height = height ?? image.height;
         sw = sw ?? width;
         sh = sh ?? height;
         draw.translate(x, y, { position });
+        if (flip)
+            context.scale(-1, 1);
         context.drawImage(image, sx, sy, sw, sh, center ? -width / 2 : 0, center ? -height / 2 : 0, width, height);
         context.resetTransform();
     },

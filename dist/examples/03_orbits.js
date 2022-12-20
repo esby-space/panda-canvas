@@ -1,5 +1,5 @@
-import Panda from '../panda/panda.js';
-Panda.init({ pixelated: true, container: document.querySelector('#container') });
+import { Panda, Mathy } from "../panda/panda.js";
+Panda.init({ pixelated: true, container: document.querySelector("#container") });
 // a simulation of planets orbiting a star
 // basic physics and sprite rendering
 class Planet {
@@ -8,7 +8,7 @@ class Planet {
     mass;
     velocity;
     sprite;
-    constructor(x, y, mass, velocity = Panda.math.Vector(0, 0), sprite = null) {
+    constructor(x, y, mass, velocity = new Mathy.Vector(0, 0), sprite = null) {
         this.x = x;
         this.y = y;
         this.mass = mass;
@@ -18,14 +18,14 @@ class Planet {
 }
 // the bodies we're trying to simulate
 const Sun = new Planet(Panda.width / 2, Panda.height / 2, 20000);
-const Earth = new Planet(Sun.x, Sun.y - 350, 100, Panda.math.Vector(7, 0));
-const Mars = new Planet(Sun.x, Sun.y + 400, 100, Panda.math.Vector(-7, 0));
+const Earth = new Planet(Sun.x, Sun.y - 350, 100, new Mathy.Vector(7, 0));
+const Mars = new Planet(Sun.x, Sun.y + 400, 100, new Mathy.Vector(-7, 0));
 const objects = [Sun, Earth, Mars];
 // load in the sprites
 async function load() {
-    Earth.sprite = await Panda.sprite('./scripts/examples/sprites/earth.png');
-    Mars.sprite = await Panda.sprite('./scripts/examples/sprites/mars.png');
-    Sun.sprite = await Panda.sprite('./scripts/examples/sprites/sun.png');
+    Earth.sprite = await Panda.sprite("./scripts/examples/sprites/earth.png");
+    Mars.sprite = await Panda.sprite("./scripts/examples/sprites/mars.png");
+    Sun.sprite = await Panda.sprite("./scripts/examples/sprites/sun.png");
 }
 // main update function
 function update() {
@@ -40,7 +40,7 @@ function updateVelocity() {
             if (object1 == object2 || i < j)
                 continue;
             const radius = Math.sqrt((object2.x - object1.x) ** 2 + (object2.y - object1.y) ** 2);
-            const gravity = Panda.math.Vector(object2.x - object1.x, object2.y - object1.y);
+            const gravity = new Mathy.Vector(object2.x - object1.x, object2.y - object1.y);
             gravity.magnitude = calculateGravity(object1.mass, object2.mass, radius);
             object1.velocity = object1.velocity.add(gravity.divide(object1.mass));
             object2.velocity = object2.velocity.add(gravity.divide(-object2.mass));
@@ -61,7 +61,7 @@ function calculateGravity(mass1, mass2, radius) {
 // change camera when space is pushed
 let currentTrack = 0;
 let currentBody = Sun;
-Panda.keyboard.keyDown(' ', () => {
+Panda.keyboard.keyDown(" ", () => {
     currentTrack++;
     if (currentTrack >= objects.length)
         currentTrack = 0;

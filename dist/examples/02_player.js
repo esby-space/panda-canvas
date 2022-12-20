@@ -1,21 +1,21 @@
-import Panda from '../panda/panda.js';
-Panda.init({ pixelated: true, container: document.querySelector('#container') });
+import { Panda, Mathy } from "../panda/panda.js";
+Panda.init({ pixelated: true, container: document.querySelector("#container") });
 // panda player!
 // sprite rendering, keyboard input
 const player = {
     x: Panda.width / 2,
     y: Panda.height / 2,
-    velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.sprite('./scripts/examples/sprites/panda.png', {
+    velocity: new Mathy.Vector(0, 0),
+    sprite: await Panda.sprite("./scripts/examples/sprites/panda.png", {
         hFrame: 3,
         vFrame: 4,
     }),
 };
 function update(dt) {
     // get keyboard input
-    const inputVector = Panda.math.Vector(0, 0);
-    inputVector.x = Panda.keyboard.axis('a', 'd');
-    inputVector.y = Panda.keyboard.axis('w', 's');
+    const inputVector = new Mathy.Vector(0, 0);
+    inputVector.x = Panda.keyboard.axis("a", "d");
+    inputVector.y = Panda.keyboard.axis("w", "s");
     inputVector.magnitude = 15; // speed of the panda
     // update the velocity to the input, use dt for consistent movement
     player.velocity = player.velocity.moveToward(inputVector, dt * 90);
@@ -41,5 +41,5 @@ function draw() {
         center: true,
     });
 }
-Panda.draw.backgroundColor = 'darkPurple';
+Panda.draw.backgroundColor = "darkPurple";
 Panda.run(update, draw);

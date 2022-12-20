@@ -1,9 +1,9 @@
-import keyboard from './keyboard.js';
-import mouse from './mouse.js';
-import camera from './camera.js';
-import draw from './draw.js';
-import * as Shapes from './shapes.js';
-import math, * as Math from './math.js';
+import keyboard from "./keyboard.js";
+import mouse from "./mouse.js";
+import camera from "./camera.js";
+import draw from "./draw.js";
+import * as Shapes from "./shapes.js";
+import * as Mathy from "./math.js";
 let rafID;
 const Panda = {
     // UTILIIES //
@@ -11,7 +11,6 @@ const Panda = {
     mouse,
     camera,
     draw,
-    math,
     // MAIN //
     width: 0,
     height: 0,
@@ -39,7 +38,7 @@ const Panda = {
         if (load)
             await load();
         if (!Panda.context)
-            throw new Error('please initialize panda using panda.init() x_x');
+            throw new Error("please initialize panda using panda.init() x_x");
         if (rafID)
             this.stop();
         let last = 0;
@@ -47,12 +46,12 @@ const Panda = {
         const loop = (time) => {
             dt = (time - last) / 1000;
             last = time;
-            update(dt);
-            draw();
-            Panda.frame++;
             if (!this.paused) {
-                rafID = window.requestAnimationFrame(loop);
+                update(dt);
+                draw();
+                Panda.frame++;
             }
+            rafID = window.requestAnimationFrame(loop);
         };
         this.paused = false;
         loop(0);
@@ -63,22 +62,6 @@ const Panda = {
             throw new Error(`can't stop an animation that hasn't begun yet x_x`);
         window.cancelAnimationFrame(rafID);
         this.paused = true;
-    },
-    // CLASS WRAPPERS //
-    line(x1, y1, x2, y2) {
-        return new Shapes.Line(x1, y1, x2, y2);
-    },
-    circle(x, y, radius) {
-        return new Shapes.Circle(x, y, radius);
-    },
-    rectangle(x, y, width, height) {
-        return new Shapes.Rectangle(x, y, width, height);
-    },
-    square(x, y, length) {
-        return new Shapes.Rectangle(x, y, length, length);
-    },
-    polygon(points) {
-        return new Shapes.Polygon(points);
     },
     async sprite(src, options) {
         const image = new Image();
@@ -92,9 +75,8 @@ const Panda = {
         const audio = new Audio();
         audio.src = src;
         audio.volume = volume ?? 1;
-        audio.preload = 'auto';
+        audio.preload = "auto";
         return audio;
     },
 };
-export default Panda;
-export { Shapes, Math };
+export { Panda, Shapes, Mathy };

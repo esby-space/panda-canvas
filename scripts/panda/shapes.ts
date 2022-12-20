@@ -88,14 +88,15 @@ export class Sprite {
             height,
             center,
             position,
-        }: { width?: number; height?: number; center?: boolean; position?: 'scene' | 'view' } = {}
+            flip,
+        }: { width?: number; height?: number; center?: boolean; position?: 'scene' | 'view'; flip?: boolean } = {}
     ): void {
         const sw = this.image.width / this.hFrame;
         const sh = this.image.height / this.vFrame;
         const sx = (this.frame % this.hFrame) * sw;
         const sy = Math.floor(this.frame / this.hFrame) * sh;
 
-        draw.image(this.image, x, y, { sx, sy, sw, sh, width, height, center, position });
+        draw.image(this.image, x, y, { sx, sy, sw, sh, width, height, center, position, flip });
     }
 
     animate(frames: number[], fps: number): void {
@@ -125,5 +126,10 @@ export class Sprite {
     stopAnimation(): void {
         if (this.rafID) window.cancelAnimationFrame(this.rafID);
         this.animation = null;
+    }
+
+
+    spriteFrom(frame: number): Sprite {
+        return new Sprite(this.image, this.hFrame, this.vFrame, frame);
     }
 }

@@ -96,12 +96,12 @@ export class Sprite {
         this.animation = animation;
         this.rafID = rafID;
     }
-    draw(x, y, { width, height, center, position, } = {}) {
+    draw(x, y, { width, height, center, position, flip, } = {}) {
         const sw = this.image.width / this.hFrame;
         const sh = this.image.height / this.vFrame;
         const sx = (this.frame % this.hFrame) * sw;
         const sy = Math.floor(this.frame / this.hFrame) * sh;
-        draw.image(this.image, x, y, { sx, sy, sw, sh, width, height, center, position });
+        draw.image(this.image, x, y, { sx, sy, sw, sh, width, height, center, position, flip });
     }
     animate(frames, fps) {
         if (this.animation != frames.toString())
@@ -130,5 +130,8 @@ export class Sprite {
         if (this.rafID)
             window.cancelAnimationFrame(this.rafID);
         this.animation = null;
+    }
+    spriteFrom(frame) {
+        return new Sprite(this.image, this.hFrame, this.vFrame, frame);
     }
 }

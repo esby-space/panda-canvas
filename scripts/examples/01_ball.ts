@@ -1,5 +1,5 @@
-import Panda from '../panda/panda.js';
-Panda.init({ container: document.querySelector('#container') as HTMLElement });
+import { Panda, Mathy } from "../panda/panda.js";
+Panda.init({ container: document.querySelector("#container") as HTMLElement });
 
 // a red bouncing ball
 // rendering and keyboard input
@@ -7,7 +7,7 @@ Panda.init({ container: document.querySelector('#container') as HTMLElement });
 const ball = {
     x: 200,
     y: 200,
-    velocity: Panda.math.Vector(10, 0),
+    velocity: new Mathy.Vector(10, 0),
 };
 
 function update() {
@@ -37,13 +37,13 @@ function update() {
 }
 
 // give the ball a "kick" when space is pushed
-Panda.keyboard.keyDown(' ', () => {
+Panda.keyboard.keyDown(" ", () => {
     ball.velocity.magnitude += 50;
 });
 
 function draw() {
     Panda.draw.clear();
-    Panda.draw.circle(ball.x, ball.y, 50, { color: 'red' });
+    Panda.draw.circle(ball.x, ball.y, 50, { color: "red" });
 }
 
 Panda.run(update, draw);

@@ -1,5 +1,5 @@
-import Panda from '../panda/panda.js';
-Panda.init({ pixelated: true, container: document.querySelector('#container') });
+import { Panda, Mathy } from "../panda/panda.js";
+Panda.init({ pixelated: true, container: document.querySelector("#container") });
 // Globals
 const WORLD_WIDTH = 10000;
 // bai!
@@ -8,23 +8,23 @@ const bai = {
     y: Panda.height / 2,
     width: 100,
     height: 200,
-    velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.sprite('./scripts/examples/sprites/bai.png', {
+    velocity: new Mathy.Vector(0, 0),
+    sprite: await Panda.sprite("./scripts/examples/sprites/bai.png", {
         hFrame: 8,
         vFrame: 2,
     }),
 };
 const trees = {
     xs: [],
-    sprite: await Panda.sprite('./scripts/examples/sprites/tree.png'),
+    sprite: await Panda.sprite("./scripts/examples/sprites/tree.png"),
 };
 for (let i = 0; i < 20; i++) {
     trees.xs = [...trees.xs, Math.random() * WORLD_WIDTH - WORLD_WIDTH / 2];
 }
 function update(dt) {
     // input
-    const inputVector = Panda.math.Vector(0, 0);
-    inputVector.x = Panda.keyboard.axis('a', 'd');
+    const inputVector = new Mathy.Vector(0, 0);
+    inputVector.x = Panda.keyboard.axis("a", "d");
     inputVector.magnitude = 12;
     bai.velocity = bai.velocity.moveToward(inputVector, dt * 100);
     // gravity
@@ -57,9 +57,9 @@ function jump() {
 }
 function draw() {
     Panda.draw.clear();
-    Panda.draw.square(100, 100, 200, { color: 'yellow' });
+    Panda.draw.square(100, 100, 200, { color: "yellow" });
     Panda.draw.rectangle(-WORLD_WIDTH / 2, Panda.height - 100, WORLD_WIDTH, 100, {
-        color: 'darkGreen',
+        color: "darkGreen",
         center: false,
     });
     for (const x of trees.xs) {
@@ -75,8 +75,8 @@ function draw() {
     });
 }
 function main() {
-    Panda.draw.backgroundColor = 'blue';
+    Panda.draw.backgroundColor = "blue";
     Panda.run(update, draw);
-    Panda.keyboard.keyDown(' ', jump);
+    Panda.keyboard.keyDown(" ", jump);
 }
 main();

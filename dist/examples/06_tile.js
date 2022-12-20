@@ -1,9 +1,9 @@
-import Panda from '../panda/panda.js';
+import { Panda, Shapes, Mathy } from "../panda/panda.js";
 Panda.init({
     pixelated: true,
     width: 300,
     height: 200,
-    container: document.querySelector('#container'),
+    container: document.querySelector("#container"),
 });
 // global constants
 const TILE_SIZE = 16;
@@ -13,9 +13,9 @@ const bai = {
     SPEED: 3,
     ACCELERATION: 20,
     JUMP: 10,
-    rectangle: Panda.rectangle(150, 100, 16, 32),
-    velocity: Panda.math.Vector(0, 0),
-    sprite: await Panda.sprite('./scripts/examples/sprites/bai.png', {
+    rectangle: new Shapes.Rectangle(150, 100, 16, 32),
+    velocity: new Mathy.Vector(0, 0),
+    sprite: await Panda.sprite("./scripts/examples/sprites/bai.png", {
         vFrame: 2,
         hFrame: 8,
     }),
@@ -37,11 +37,11 @@ const bai = {
     },
 };
 const background = [
-    [0.25, Panda.rectangle(120, 10, 70, 400)],
-    [0.25, Panda.rectangle(280, 30, 40, 400)],
-    [0.5, Panda.rectangle(30, 40, 40, 400)],
-    [0.5, Panda.rectangle(130, 90, 100, 400)],
-    [0.5, Panda.rectangle(300, 80, 120, 400)],
+    [0.25, new Shapes.Rectangle(120, 10, 70, 400)],
+    [0.25, new Shapes.Rectangle(280, 30, 40, 400)],
+    [0.5, new Shapes.Rectangle(30, 40, 40, 400)],
+    [0.5, new Shapes.Rectangle(130, 90, 100, 400)],
+    [0.5, new Shapes.Rectangle(300, 80, 120, 400)],
 ];
 const mapString = `
 00000000000000000000000000000000000000
@@ -58,11 +58,11 @@ const mapString = `
 11111111111111111110000010000000000000
 11111111111111111110000000000000000000
 `;
-const map = mapString.split(/\n/).map((row) => row.split('').map((tile) => parseInt(tile)));
+const map = mapString.split(/\n/).map((row) => row.split("").map((tile) => parseInt(tile)));
 // sprites and sounds
-const dirt = await Panda.sprite('./scripts/examples/sprites/dirt.png');
-const grass = await Panda.sprite('./scripts/examples/sprites/grass.png');
-const jumpSound = Panda.sound('./scripts/examples/sounds/jump.wav', { volume: 0.5 });
+const dirt = await Panda.sprite("./scripts/examples/sprites/dirt.png");
+const grass = await Panda.sprite("./scripts/examples/sprites/grass.png");
+const jumpSound = Panda.sound("./scripts/examples/sounds/jump.wav", { volume: 0.5 });
 // game map
 let collisionTiles = [];
 for (let y = 0; y < map.length; y++) {
@@ -70,7 +70,7 @@ for (let y = 0; y < map.length; y++) {
         if (map[y][x] == 1 || map[y][x] == 2) {
             collisionTiles = [
                 ...collisionTiles,
-                Panda.rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE),
+                new Shapes.Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE),
             ];
         }
     }
@@ -81,8 +81,8 @@ const testCollisions = (rectangle, tiles) => {
 // main functions!
 Panda.camera.y -= 50;
 const update = (dt) => {
-    const input = Panda.math.Vector(0, 0);
-    input.x = Panda.keyboard.axis('a', 'd');
+    const input = new Mathy.Vector(0, 0);
+    input.x = Panda.keyboard.axis("a", "d");
     input.magnitude = bai.SPEED;
     bai.velocity = bai.velocity.moveToward(input, dt * bai.ACCELERATION);
     bai.velocity.y += GRAVITY * dt;
@@ -122,13 +122,13 @@ const move = (rectangle, movement, tiles) => {
     }
 };
 // jump!
-Panda.keyboard.keyDown(' ', () => {
+Panda.keyboard.keyDown(" ", () => {
     bai.jump();
 });
 const draw = () => {
     Panda.draw.clear();
     Panda.draw.rectangle(0, 80, Panda.width, Panda.height, {
-        position: 'view',
+        position: "view",
         color: [7, 80, 75],
         center: false,
     });
@@ -152,5 +152,5 @@ const draw = () => {
         height: bai.rectangle.height,
     });
 };
-Panda.draw.backgroundColor = 'blue';
+Panda.draw.backgroundColor = "blue";
 Panda.run(update, draw);
